@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Online Chat</title>
+<meta name="generator" content="Bluefish 2.2.7" >
+<meta name="author" content="Anton Yun" >
+<meta name="date" content="2017-09-10T05:52:17+0800" >
+<meta name="copyright" content="">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<meta http-equiv="expires" content="0">
+<link href="" rel="stylesheet" type="text/css">
+<style type="text/css">
+html {
+	height: 100hv;
+}
+body {
+	height: 100hv;
+	background-color: #FFFFFF;
+	color: #505050;
+	margin: 0;
+	padding: 0;
+	font-family: arial, helvetica, sans-serif;
+}
+
+#AuthenticationForm {
+	width: 250px;
+	margin: 100px auto;
+	padding: 10px;
+}
+
+.FormLabelWrap {
+	clear: both;
+	width: 100%;
+	margin: 5px 0px;
+}
+
+.AuthenticationFormTitle {
+	float: left;
+	margin: 0px 0px 10px 0px;
+	font-size: 18px;
+	text-align: left;
+	font-weight: bold;
+}
+
+.SwitchFormsLabel {
+	margin: 4px 0px auto 10px;
+	cursor: pointer;
+	float: right;
+	color: #129793;
+	font-weight: bold;
+	font-family: arial;
+	font-size: 14px;
+}
+
+.SwitchFormsLabel:hover {
+    text-decoration: underline;
+}
+
+.FormLabelWrap {
+	display: block;
+	clear: both;
+	width: 100%;
+	margin: 5px 0px;
+}
+
+.FormLabel {
+	float: left;
+	font-weight: bold;
+	font-size: 14px;
+	font-family: arial;
+	margin-bottom: 5px;
+}
+
+.FormInput {
+    width: 96%;
+    border: 1px solid #505050;
+    padding: 2px 2%;
+    height: 20px;
+    margin-bottom: 10px;
+    outline: none;
+    clear: both;
+}
+
+#GuestFormSubmit {
+	background-color: #FFF5C3;
+	border-color: #FFF5C3;
+	color: #505050;
+}
+
+#LoginFormSubmit {
+	background-color: #9BD7D5;
+	border-color: #9BD7D5;
+	color: #FFFFFF;
+}
+
+#RegistrationFormSubmit {
+	background-color: #FF7260;
+	border-color: #FF7260;
+	color: #FFFFFF;
+}
+
+.FormSubmit {
+	cursor: pointer;
+	display: block;
+	clear: both;
+	width: auto;
+	height: 25px;
+	font-weight: bold;
+	border: 1px solid;
+	margin: 15px auto;
+	font-size: 14px;
+	border-radius: 2px;
+}
+.FormSubmit:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+	<div id="AuthenticationForm" style="display: block">
+		<div class="FormLabelWrap" style="margin: 2px 0px 20px 0px; height: 27px;">
+			<div id="GuestAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Guest</div>
+			<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Log in</div>
+			<div id="RegistrationAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Sign up</div>
+			<div id="SwitchToRegistrationLabel" class="SwitchFormsLabel" style="display: block;">Sign up</div>
+			<div id="SwitchToLoginLabel" class="SwitchFormsLabel" style="display: block;">Log in</div>
+			<div id="SwitchToGuestLabel" class="SwitchFormsLabel" style="display: none;">Guest</div>
+		</div>
+		<div id="FormWrapUsername" class="FormLabelWrap" style="display: block;">
+			<label class="FormLabel" for="Username">Username:</label>
+			<input type="text" class="FormInput" id="Username" />
+		</div>
+		<div id="FormWrapAccessCode" class="FormLabelWrap" style="display: block;">
+			<label class="FormLabel" for="AccessCode">Access code:</label>
+			<input type="password" class="FormInput" id="AccessCode" />
+		</div>
+		<div id="FormWrapPassword" class="FormLabelWrap" style="display: none;">
+			<label class="FormLabel" for="Password">Password:</label>
+			<input type="password" class="FormInput" id="Password" />
+		</div>
+		<div id="FormWrapPassword2" class="FormLabelWrap" style="display: none;">
+			<label class="FormLabel" for="Password2">Password: (enter again)</label>
+			<input type="password" class="FormInput" id="Password2" />
+		</div>
+		<button id="GuestFormSubmit" class="FormSubmit" style="display: block;">Chat as guest</button>
+		<button id="LoginFormSubmit" class="FormSubmit" style="display: none;">Log in</button>
+		<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
+	</div>
+	
+	<div id="chat" style="display: none">
+		<header>
+			<h1>Chat</h1>		
+		</header>
+		<div id="users-list">
+			<div id="users-list-header">People in Chatroom</div>
+				<div class="UsersListUserWrapper">
+					<div class="UsersListUsername">who111</div>
+					<img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online">
+				</div>
+				<div class="UsersListUserWrapper">
+					<div class="UsersListUsername">me</div>
+					<img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online">
+				</div>
+		</div>
+		<div id="messages-wrapper"></div>
+		<div id="input-text-wrapper">
+			<textarea id="InputTextArea" maxlength="175"></textarea>
+		</div>
+		<div id="button-wrapper">
+			<input type="button" id="SendButton" value="Send" />		
+		</div>
+		<footer>
+			Footer
+		</footer>
+	</div>	
+	
+	<script type="text/javascript">
+		(function() {
+			socket = new WebSocket('ws://172.17.0.4');
+			
+			socket.onmessage = function (event) {
+				console.log(event);
+				var data = JSON.parse(event.data);
+				console.log(data);
+				switch(data.type) {
+					case "success":
+						document.getElementById("AuthenticationForm").style.display="none";
+						document.getElementById("chat").style.display="block";
+						console.log("Connection was established.");
+						break;
+					case "reject":
+						console.log("Connection was rejected.");
+						break;
+				};
+			};
+		
+			document.getElementById("SwitchToGuestLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="block";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="none";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="none";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="block";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToLoginLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="block";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="none";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="none";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="block";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToRegistrationLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="block";
+				document.getElementById("SwitchToRegistrationLabel").style.display="none";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="none";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="block";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="block";
+			});
+			
+			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value;
+				var accessCode = document.getElementById("AccessCode").value;
+				var message = JSON.stringify({ "type": "guest", "username": username, "accessCode": accessCode });
+				socket.send(message);
+			});
+			
+			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
+				
+			});
+			
+			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
+				
+			});
+		})();
+	</script>
+</body>
+</html>
