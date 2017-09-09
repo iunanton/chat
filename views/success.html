@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chat 1.0.0</title>
+<meta name="generator" content="Bluefish 2.2.7" >
+<meta name="author" content="Anton Yun" >
+<meta name="date" content="2017-09-09T22:20:15+0800" >
+<meta name="copyright" content="">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<meta http-equiv="expires" content="0">
+<link href="" rel="stylesheet" type="text/css">
+<style type="text/css">
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: arial, helvetica, sans-serif;
+	background-color: #EEE;
+	color: #696969;
+}
+.container {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr 250px 800px 1fr;
+  grid-template-rows: 50px auto 60px 25px 50px;
+  grid-gap: 5px;
+  background-color: inherit;
+  color: #444;
+}
+header {
+  grid-column: 1 / 5;
+  grid-row: 1 / 2;
+  color: #FFA366;
+}
+#users-list {
+  grid-column: 2 / 3;
+  grid-row: 2 / 5;
+  background-color: white;
+  border: thin solid #696969;
+}
+#users-list-header {
+	margin-top: 5px;
+	width: 100%;
+	text-align: center;
+	font-style: italic;
+	font-weight: bold;
+	color: #FFA366;
+}
+.UsersListUserWrapper {
+	width: 100%;
+	height: 32px;
+	clear: both;
+}
+.UsersListUsername {
+	float: left;
+	margin-top: 7px;
+	margin-left: 8px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #3B5897;
+}
+.UserListOnlineIcon {
+	width: 8px;
+	height: 8px;
+	float: right;
+	margin-top: 11px;
+	margin-right: 8px;
+}
+#messages-wrapper {
+	grid-column: 3 / 4;
+	grid-row: 2 / 3;
+	background-color: white;
+	overflow-y: scroll;
+	border: thin solid #696969;
+}
+.chat-message-wrapper {
+	margin: 0px;
+	margin-left: 5px;
+	padding: 3px 0;
+}
+.chat-message-username {
+	float: left;
+	color: #3B5897;
+	font-size: 11px;
+	font-weight: bold;
+}
+.chat-message-time {
+	float: left;
+	color: #898989;
+	font-size: 9px;
+	margin-top: 1px;
+	margin-left: 3px;
+}
+.chat-message-body {
+	margin-top: 4px;
+	font-size: 15px;
+	clear: both;
+}
+#input-text-wrapper {
+	grid-column: 3 / 4;
+	grid-row: 3 / 4;
+	border: thin solid #696969;
+	background-color: lightsalmon;
+}
+#InputTextArea {
+	box-sizing:border-box;
+	height: 100%;
+	width: 100%;
+	resize: none;
+}
+#button-wrapper {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
+  text-align: right;
+}
+#SendButton {
+	width: auto;
+	height: 100%;
+	padding: 0 10px;
+	border: thin solid #4B79A1; 
+	background-color: #4B79A1;
+	color: white;
+	cursor: pointer;
+}
+footer {
+  grid-column: 1 / 5;
+  grid-row: 5 / 6;
+  background-color: #DDD;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Chat</h1>		
+		</header>
+		<div id="users-list">
+			<div id="users-list-header">People in Chatroom</div>
+				<div class="UsersListUserWrapper">
+					<div class="UsersListUsername">who111</div>
+					<img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online">
+				</div>
+				<div class="UsersListUserWrapper">
+					<div class="UsersListUsername">me</div>
+					<img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online">
+				</div>
+		</div>
+		<div id="messages-wrapper"></div>
+		<div id="input-text-wrapper">
+			<textarea id="InputTextArea" maxlength="175"></textarea>
+		</div>
+		<div id="button-wrapper">
+			<input type="button" id="SendButton" value="Send" />		
+		</div>
+		<footer>
+			Footer
+		</footer>
+	</div>
+	<script type="text/javascript">
+	(function() {
+		var html='';
+		socket = new WebSocket('ws://172.17.0.2');
+	
+		socket.onmessage = function(event) {
+			message = JSON.parse(event.data);
+			var time = new Date(message.timestamp*1000);
+			html += "<div class=\"chat-message-wrapper\"><div class=\"chat-message-top-wrapper\"><div class=\"chat-message-username\">" + message.username + "</div><div class=\"chat-message-time\">" + time.getHours() + ":" + time.getMinutes() + "</div></div><div class=\"chat-message-body\">" + message.messageBody + "</div></div>";
+			document.getElementById("messages-wrapper").innerHTML = html;
+			console.log(message);
+		};
+	})();
+	</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[{"ext":{"chatroomId":204141},"version":"1.0","minimumVersion":"0.9","channel":"/meta/handshake","supportedConnectionTypes":["long-polling","callback-polling"],"advice":{"timeout":60000,"interval":0},"id":"1"}]
+[{"minimumVersion":"1.0","clientId":"stgjee1gbllh9411qqiebg24t6ia","supportedConnectionTypes":["long-polling","callback-polling"],"channel":"/meta/handshake","id":"1","version":"1.0","successful":true}]
+
+[{"channel":"/meta/connect","connectionType":"long-polling","advice":{"timeout":0},"id":"2","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+[{"advice":{"interval":0,"timeout":30000,"reconnect":"retry"},"channel":"/meta/connect","id":"2","successful":true}]
+
+[{"channel":"/service/user/context/self/complete","data":{},"id":"3","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+
+[{"channel":"/meta/connect","connectionType":"long-polling","id":"4","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+.^....HLsOnline":true,"username":"James colins"},"e6e3fc33-190d-4b68-a088-e59d5215b1cb":{"isGuest":true,"isDeleted":false,"userUuid":"e6e3fc33-190d-4b68-a088-e59d5215b1cb","isOnline":true,"username":"Tiny 40"},"81f26c1a-6bee-4a23-a0d8-9dab376460bb":{"isGuest":true,"isDeleted":false,"userUuid":"81f26c1a-6bee-4a23-a0d8-9dab376460bb","isOnline":true,"username":"blue briefs guy"},"9ededaf2-59f3-4965-80ae-725af005f8e9":{"isGuest":false,"isDeleted":false,"userUuid":"9ededaf2-59f3-4965-80ae-725af005f8e9","isOnline":true,"username":"Cody 21"},"0c335c18-6016-483c-9d5a-acdb749a1251":{"isGuest":false,"isDeleted":false,"userUuid":"0c335c18-6016-483c-9d5a-acdb749a1251","isOnline":true,"username":"Daddy needs a lil sub"},"d68e1c30-07ba-43cc-b705-4700ecff4f05":{"isGuest":true,"isDeleted":false,"userUuid":"d68e1c30-07ba-43cc-b705-4700ecff4f05","isOnline":true,"username":"uk curious  m"},"3c96ad3f-a523-4589-b94a-1d55d51b8754":{"isGuest":true,"isDeleted":false,"userUuid":"3c96ad3f-a523-4589-b94a-1d55d51b8754","isOnline":true,"username":"mark.rogers"}},"messages":[{"userUuid":"d571628a-b6dc-4987-913c-25596f4c7625","messageBody":"my lol was @ senpai","timestamp":1504884011882,"username":"gerova *"},{"userUuid":"a9b7d09d-badd-4b82-9682-b7949456d5d4","messageBody":"your pillow does not count as a human","timestamp":1504884017881,"username":"sexysenpai"},{"userUuid":"5f8a16ba-eb0b-4d77-9a2e-142331aa489b","messageBody":"tu es marica","timestamp":1504884020
+[{"data":{"isGuest":true,"isDeleted":false,"userUuid":"bdf0f00e-11f2-4be3-9f5e-96787000318c","isOnline":true,"username":"Londondude121"},"channel":"/chatroom/user/joined/204141"},{"channel":"/meta/connect","id":"4","successful":true}]
+
+[{"channel":"/meta/connect","connectionType":"long-polling","id":"5","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+[{"data":"d95f9740-f3ac-4662-bdc9-fea5a4d96652","channel":"/chatroom/user/left/204141"},{"channel":"/meta/connect","id":"5","successful":true}]
+
+[{"channel":"/meta/connect","connectionType":"long-polling","id":"6","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+[{"data":{"isGuest":true,"isDeleted":false,"userUuid":"262b231a-7537-4040-8b75-e0632c9a1bc4","isOnline":true,"username":"masterm"},"channel":"/chatroom/user/joined/204141"},{"channel":"/meta/connect","id":"6","successful":true}]
+
+[{"channel":"/meta/connect","connectionType":"long-polling","id":"7","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+[{"data":{"isGuest":true,"isDeleted":false,"userUuid":"81a32892-90aa-4b80-b468-9a857580508a","isOnline":true,"username":"Gigo"},"channel":"/chatroom/user/joined/204141"},{"channel":"/meta/connect","id":"7","successful":true}]
+
+[{"channel":"/meta/connect","connectionType":"long-polling","id":"8","clientId":"stgjee1gbllh9411qqiebg24t6ia"}]
+[{"data":"2f58c0f6-c94a-489d-9376-05661f20b33d","channel":"/chatroom/user/left/204141"},{"channel":"/meta/connect","id":"8","successful":true}]
