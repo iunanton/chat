@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-10T19:36:01+0800" >
+<meta name="date" content="2017-09-10T19:42:53+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -290,14 +290,14 @@ footer {
 
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('ws://172.17.0.2');
+			var socket = new WebSocket('wss://owncloudhk.net');
 
 			var usersList = [];
 
 			function updateUsersList() {
 				var html = '<div id="UsersListHeader">People in Chatroom</div>';
 				usersList.forEach(function (user) {
-					html += '<div class="UsersListUserWrapper"><div class="UsersListUsername">' + user.username + '</div><img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online"></div>';
+					html += '<div class="UsersListUserWrapper"><div class="UsersListUsername">' + user.username + '</div><img class="UserListOnlineIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH3QQQCg4n8fNJPQAAAEFJREFUGNNj/P//PwMDAwND0HM/CAMK1kluYmRgYGBgwiaJLMYY+MwXQxIZMDEQAFRQAHMtNrBOchMjE7KXsHkTAN/JFIN97NMaAAAAAElFTkSuQmCC" alt="User Online"></div>';
 				});
 				document.getElementById("UsersList").innerHTML = html;
 			}
@@ -375,7 +375,7 @@ footer {
 				document.getElementById("SwitchToRegistrationLabel").style.display="none";
 				document.getElementById("SwitchToLoginLabel").style.display="block";
 				document.getElementById("SwitchToGuestLabel").style.display="block";
-				document.getElementById("FormWrapAccessCode").style.display="none";
+				document.getElementById("FormWrapAccessCode").style.display="block";
 				document.getElementById("FormWrapPassword").style.display="block";
 				document.getElementById("FormWrapPassword2").style.display="block";
 				document.getElementById("GuestFormSubmit").style.display="none";
