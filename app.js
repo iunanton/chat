@@ -22,6 +22,8 @@ var guid = new myGuid;
 
 var usersList = [];
 
+var messages = [];
+
 function printUsersList() {
 	usersList.forEach(function (user) {
 		console.log(JSON.stringify(user));
@@ -53,7 +55,7 @@ console.log('Total clients: ', wss.clients.size);
 			return user.userUuid === ws.uuid;
 		});
 		usersList.splice(index, 1);
-		var broadcast = JSON.stringify({ type: "userLeft", data: ws.uuid });
+		var broadcast = JSON.stringify({ "type": "userLeft", "data": ws.uuid });
 		broadcastAuth(broadcast);
 	});
 
@@ -67,18 +69,31 @@ console.log('Total clients: ', wss.clients.size);
 					ws.authenticated = true;
 					ws.uuid = guid.get();
 					// console.log(JSON.stringify(user));
-					var message = JSON.stringify({ type: "success", data: { users: usersList, messages: "" } } );
+					var message = JSON.stringify({ "type": "success", "data": { "users": usersList, "messages": "" } } );
 					// console.log(message);
 					ws.send(message);
-					var user = { isGuest: true, isDeleted: false, userUuid: ws.uuid, isOnline: true, username: data.username };
+					var user = { "isGuest": true, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username };
 					usersList.push(user);
-					var broadcast = JSON.stringify({ type: "userJoined", data: user });
+					var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 					broadcastAuth(broadcast);
 				} else {
 					console.log("reject");
-					var message = JSON.stringify({ type: "reject" });
+					var message = JSON.stringify({ "type": "reject" });
 					ws.send(message);
 				}
+				break;
+			/*
+MESSAGE ADD:
+{"data":{"userUuid":"59b8c877-387a-4197-9468-310e87d76545","messageBody":"........","timestamp":1504878879236,"username":"nickname1"},"channel":"/chatroom/message/add/204141"}
+			*/
+			case "message":
+				console.log("received message");
+				var index = usersList.findIndex(function (user) {
+					return user.userUuid === ws.uuid;
+				});
+				var message = JSON.stringify({ "type": "messageAdd", "data": { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": usersList[index].username } })
+				console.log(message);
+				broadcastAuth(message);
 				break;
 		};
 		

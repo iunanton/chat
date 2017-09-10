@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-10T19:42:53+0800" >
+<meta name="date" content="2017-09-10T21:55:27+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -252,32 +252,32 @@ header {
 	margin-top: 11px;
 	margin-right: 8px;
 }
-#messages-wrapper {
+#MessagesWrapper {
 	grid-column: 3 / 4;
 	grid-row: 2 / 3;
 	background-color: white;
 	overflow-y: scroll;
 	border: thin solid #696969;
 }
-.chat-message-wrapper {
+.MessageWrapper {
 	margin: 0px;
 	margin-left: 5px;
 	padding: 3px 0;
 }
-.chat-message-username {
+.MessageUsername {
 	float: left;
 	color: #3B5897;
 	font-size: 11px;
 	font-weight: bold;
 }
-.chat-message-time {
+.MessageTime {
 	float: left;
 	color: #898989;
 	font-size: 9px;
 	margin-top: 1px;
 	margin-left: 3px;
 }
-.chat-message-body {
+.MessageBody {
 	margin-top: 4px;
 	font-size: 15px;
 	clear: both;
@@ -353,7 +353,7 @@ footer {
 		<div id="UsersList">
 			<div id="UsersListHeader">People in Chatroom</div>
 		</div>
-		<div id="messages-wrapper"></div>
+		<div id="MessagesWrapper"></div>
 		<div id="input-text-wrapper">
 			<textarea id="InputTextArea" maxlength="175"></textarea>
 		</div>
@@ -367,7 +367,7 @@ footer {
 
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('wss://owncloudhk.net');
+			var socket = new WebSocket('ws://172.17.0.2');
 
 			var usersList = [];
 
@@ -380,7 +380,6 @@ footer {
 			}
 			
 			socket.onmessage = function (event) {
-				// console.log(event);
 				var message = JSON.parse(event.data);
 				console.log(message);
 				switch(message.type) {
@@ -402,15 +401,18 @@ footer {
 						console.log("New user joined.");
 						break;
 					case "userLeft":
-						// search and slice
-						// usersList.push(data);
-						// usersList.splice(users.indexOf(socket.username), 1);
 						var index = usersList.findIndex(function (user) {
 							return user.userUuid === message.data;
 						});
 						usersList.splice(index, 1);
 						updateUsersList();
 						console.log("User left chat.");
+						break;
+					case "messageAdd":
+						var data = message.data;
+						var date = new Date(data.timestamp);
+						console.log(JSON.stringify(data));
+						document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + date.getHours() + ':' + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
 						break;
 				};
 			};
@@ -474,6 +476,13 @@ footer {
 			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
 				
 			});
+			
+			document.getElementById("SendButton").addEventListener("click", function () {
+				var messageBody = document.getElementById("InputTextArea").value;
+				document.getElementById("InputTextArea").value='';
+				var message = JSON.stringify({ "type": "message", "messageBody": messageBody });
+				socket.send(message);
+			})
 		})();
 	</script>
 </body>
