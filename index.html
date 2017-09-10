@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-10T22:22:31+0800" >
+<meta name="date" content="2017-09-10T22:52:12+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -367,7 +367,7 @@ footer {
 
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('wss://owncloudhk.net');
+			var socket = new WebSocket('ws://172.17.0.2');
 
 			var usersList = [];
 
@@ -381,13 +381,18 @@ footer {
 			
 			socket.onmessage = function (event) {
 				var message = JSON.parse(event.data);
-				console.log(message);
+				// console.log(message);
 				switch(message.type) {
 					case "success":
 						var data = message.data;
 						document.getElementById("AuthenticationForm").style.display="none";
 						usersList = data.users;
 						updateUsersList();
+						data.messages.forEach(function (data) {
+							var date = new Date(data.timestamp);
+							console.log(JSON.stringify(data));
+							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + date.getHours() + ':' + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
+						});
 						document.getElementById("Chat").style.display="grid";
 						console.log("Connection was established.");
 						break;

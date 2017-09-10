@@ -30,6 +30,12 @@ function printUsersList() {
 	})
 }
 
+function printMessages() {
+	messages.forEach(function (data) {
+		console.log(JSON.stringify(data));
+	})
+}
+
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -60,7 +66,7 @@ console.log('Total clients: ', wss.clients.size);
 	});
 
 	ws.on('message', function(event) {
-		console.log(event);
+		// console.log(event);
 		data = JSON.parse(event);
 		switch(data.type) {
 			case "guest":
@@ -69,7 +75,7 @@ console.log('Total clients: ', wss.clients.size);
 					ws.authenticated = true;
 					ws.uuid = guid.get();
 					// console.log(JSON.stringify(user));
-					var message = JSON.stringify({ "type": "success", "data": { "users": usersList, "messages": "" } } );
+					var message = JSON.stringify({ "type": "success", "data": { "users": usersList, "messages": messages } } );
 					// console.log(message);
 					ws.send(message);
 					var user = { "isGuest": true, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username };
@@ -91,9 +97,13 @@ MESSAGE ADD:
 				var index = usersList.findIndex(function (user) {
 					return user.userUuid === ws.uuid;
 				});
-				var message = JSON.stringify({ "type": "messageAdd", "data": { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": usersList[index].username } })
-				console.log(message);
-				broadcastAuth(message);
+				var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": usersList[index].username };
+				messages.push(message);
+				printMessages();
+				var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
+				// var broadcast = JSON.stringify(message);
+				// console.log(broadcast);
+				broadcastAuth(broadcast);
 				break;
 		};
 		
