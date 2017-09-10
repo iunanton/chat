@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-10T05:52:17+0800" >
+<meta name="date" content="2017-09-10T19:36:01+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -18,6 +18,7 @@
 html {
 	height: 100hv;
 }
+
 body {
 	height: 100hv;
 	background-color: #FFFFFF;
@@ -119,6 +120,122 @@ body {
 .FormSubmit:hover {
     text-decoration: underline;
 }
+
+#Chat {
+	display: grid;
+	height: 100vh;
+	grid-template-columns: 1fr 250px 800px 1fr;
+	grid-template-rows: 50px auto 60px 25px 50px;
+	grid-gap: 5px;
+	background-color: inherit;
+	color: #444;
+}
+
+header {
+  grid-column: 1 / 5;
+  grid-row: 1 / 2;
+  color: #FFA366;
+}
+
+#UsersList {
+  grid-column: 2 / 3;
+  grid-row: 2 / 5;
+  background-color: white;
+  border: thin solid #696969;
+}
+
+#UsersListHeader {
+	width: 100%;
+	color: #FFA366;
+	font-style: italic;
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 5px;
+	overflow: hidden;
+}
+
+.UsersListUserWrapper {
+	width: 100%;
+	height: 32px;
+	clear: both;
+}
+.UsersListUsername {
+	float: left;
+	margin-top: 7px;
+	margin-left: 8px;
+	font-size: 13px;
+	font-weight: bold;
+	color: #3B5897;
+}
+.UserListOnlineIcon {
+	width: 8px;
+	height: 8px;
+	float: right;
+	margin-top: 11px;
+	margin-right: 8px;
+}
+#messages-wrapper {
+	grid-column: 3 / 4;
+	grid-row: 2 / 3;
+	background-color: white;
+	overflow-y: scroll;
+	border: thin solid #696969;
+}
+.chat-message-wrapper {
+	margin: 0px;
+	margin-left: 5px;
+	padding: 3px 0;
+}
+.chat-message-username {
+	float: left;
+	color: #3B5897;
+	font-size: 11px;
+	font-weight: bold;
+}
+.chat-message-time {
+	float: left;
+	color: #898989;
+	font-size: 9px;
+	margin-top: 1px;
+	margin-left: 3px;
+}
+.chat-message-body {
+	margin-top: 4px;
+	font-size: 15px;
+	clear: both;
+}
+#input-text-wrapper {
+	grid-column: 3 / 4;
+	grid-row: 3 / 4;
+	border: thin solid #696969;
+	background-color: lightsalmon;
+}
+#InputTextArea {
+	box-sizing:border-box;
+	height: 100%;
+	width: 100%;
+	resize: none;
+}
+#button-wrapper {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
+  text-align: right;
+}
+#SendButton {
+	width: auto;
+	height: 100%;
+	padding: 0 10px;
+	border: thin solid #4B79A1;
+	background-color: #4B79A1;
+	color: white;
+	cursor: pointer;
+}
+footer {
+  grid-column: 1 / 5;
+  grid-row: 5 / 6;
+  background-color: #DDD;
+}
 </style>
 </head>
 <body>
@@ -152,20 +269,12 @@ body {
 		<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
 	</div>
 	
-	<div id="chat" style="display: none">
+	<div id="Chat" style="display: none">
 		<header>
 			<h1>Chat</h1>		
 		</header>
-		<div id="users-list">
-			<div id="users-list-header">People in Chatroom</div>
-				<div class="UsersListUserWrapper">
-					<div class="UsersListUsername">who111</div>
-					<img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online">
-				</div>
-				<div class="UsersListUserWrapper">
-					<div class="UsersListUsername">me</div>
-					<img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online">
-				</div>
+		<div id="UsersList">
+			<div id="UsersListHeader">People in Chatroom</div>
 		</div>
 		<div id="messages-wrapper"></div>
 		<div id="input-text-wrapper">
@@ -177,24 +286,54 @@ body {
 		<footer>
 			Footer
 		</footer>
-	</div>	
-	
+	</div>
+
 	<script type="text/javascript">
 		(function() {
-			socket = new WebSocket('ws://172.17.0.4');
+			var socket = new WebSocket('ws://172.17.0.2');
+
+			var usersList = [];
+
+			function updateUsersList() {
+				var html = '<div id="UsersListHeader">People in Chatroom</div>';
+				usersList.forEach(function (user) {
+					html += '<div class="UsersListUserWrapper"><div class="UsersListUsername">' + user.username + '</div><img class="UserListOnlineIcon" src="images/UserOnline.png" alt="User Online"></div>';
+				});
+				document.getElementById("UsersList").innerHTML = html;
+			}
 			
 			socket.onmessage = function (event) {
-				console.log(event);
-				var data = JSON.parse(event.data);
-				console.log(data);
-				switch(data.type) {
+				// console.log(event);
+				var message = JSON.parse(event.data);
+				console.log(message);
+				switch(message.type) {
 					case "success":
+						var data = message.data;
 						document.getElementById("AuthenticationForm").style.display="none";
-						document.getElementById("chat").style.display="block";
+						usersList = data.users;
+						updateUsersList();
+						document.getElementById("Chat").style.display="grid";
 						console.log("Connection was established.");
 						break;
 					case "reject":
 						console.log("Connection was rejected.");
+						break;
+					case "userJoined":
+						var data = message.data;
+						usersList.push(data);
+						updateUsersList();
+						console.log("New user joined.");
+						break;
+					case "userLeft":
+						// search and slice
+						// usersList.push(data);
+						// usersList.splice(users.indexOf(socket.username), 1);
+						var index = usersList.findIndex(function (user) {
+							return user.userUuid === message.data;
+						});
+						usersList.splice(index, 1);
+						updateUsersList();
+						console.log("User left chat.");
 						break;
 				};
 			};

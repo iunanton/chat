@@ -3,7 +3,7 @@ const http = require('http');
 // const url = require('url');
 const WebSocket = require('ws');
 const app = express();
-var bodyParser = require('body-parser');
+// var bodyParser = require('body-parser');
 
 var port = process.env.PORT || 80;
 
@@ -20,8 +20,16 @@ class myGuid {
 
 var guid = new myGuid;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+var usersList = [];
+
+function printUsersList() {
+	usersList.forEach(function (user) {
+		console.log(JSON.stringify(user));
+	})
+}
+
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.route('/')
 .get(function(req, res) {
@@ -40,7 +48,13 @@ console.log('Total clients: ', wss.clients.size);
 
 	ws.on('close', function(event) {
 		console.log('Connection closed');
-console.log('Total clients: ', wss.clients.size);
+		console.log('Total clients: ', wss.clients.size);
+		var index = usersList.findIndex(function (user) {
+			return user.userUuid === ws.uuid;
+		});
+		usersList.splice(index, 1);
+		var broadcast = JSON.stringify({ type: "userLeft", data: ws.uuid });
+		broadcastAuth(broadcast);
 	});
 
 	ws.on('message', function(event) {
@@ -51,12 +65,14 @@ console.log('Total clients: ', wss.clients.size);
 				if ( data.accessCode === "lovely" ) {
 					console.log("success");
 					ws.authenticated = true;
-					// search/create GUID for specified data.username
-					ws.guid = guid.get();
-					var message = JSON.stringify({ type: "success" });
+					ws.uuid = guid.get();
+					// console.log(JSON.stringify(user));
+					var message = JSON.stringify({ type: "success", data: { users: usersList, messages: "" } } );
+					// console.log(message);
 					ws.send(message);
-					// broadcastAuth user joined
-					var broadcast = JSON.stringify({ type: "userJoined", isGuest: true, isDeleted: false, userUuid: ws.guid, isOnline: true, username: data.username });
+					var user = { isGuest: true, isDeleted: false, userUuid: ws.uuid, isOnline: true, username: data.username };
+					usersList.push(user);
+					var broadcast = JSON.stringify({ type: "userJoined", data: user });
 					broadcastAuth(broadcast);
 				} else {
 					console.log("reject");
@@ -84,9 +100,9 @@ console.log('Total clients: ', wss.clients.size);
 		});
 	}
 
-	setInterval(broadcastAll, 5000, JSON.stringify({ userUuid: "59b8c877-387a-4197-9468-310e87d76545", messageBody: "how is everyone in this nice room?", timestamp: 1504958171591, username: "who111" }));
+	// setInterval(broadcastAll, 5000, JSON.stringify({ userUuid: "59b8c877-387a-4197-9468-310e87d76545", messageBody: "how is everyone in this nice room?", timestamp: 1504958171591, username: "who111" }));
 
-	setInterval(broadcastAuth, 5000, JSON.stringify({ userUuid: "59b8c877-387a-4197-9468-310e87d76645", messageBody: "only for authenticated users", timestamp: 1504958171591, username: "authenticated" }));
+	// setInterval(broadcastAuth, 5000, JSON.stringify({ userUuid: "59b8c877-387a-4197-9468-310e87d76645", messageBody: "only for authenticated users", timestamp: 1504958171591, username: "authenticated" }));
 
 });
  
