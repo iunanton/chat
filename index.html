@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-10T21:55:27+0800" >
+<meta name="date" content="2017-09-10T22:22:31+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -367,7 +367,7 @@ footer {
 
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('ws://172.17.0.2');
+			var socket = new WebSocket('wss://owncloudhk.net');
 
 			var usersList = [];
 
@@ -476,7 +476,13 @@ footer {
 			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
 				
 			});
-			
+
+			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
+				if (event.keyCode == '13') {
+					document.getElementById("SendButton").click();
+				}
+			});
+
 			document.getElementById("SendButton").addEventListener("click", function () {
 				var messageBody = document.getElementById("InputTextArea").value;
 				document.getElementById("InputTextArea").value='';
