@@ -22,25 +22,6 @@ class myGuid {
 
 var guid = new myGuid;
 
-var usersList = [];
-
-var messages = [];
-
-function printUsersList() {
-	usersList.forEach(function (user) {
-		console.log(JSON.stringify(user));
-	})
-}
-
-function printMessages() {
-	messages.forEach(function (data) {
-		console.log(JSON.stringify(data));
-	})
-}
-
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
-
 app.route('/')
 .get(function(req, res) {
   res.sendFile(__dirname + '/index.html');
@@ -53,22 +34,31 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws, req) {
 	ws.authenticated = false;
-	console.log('Connection established');
-console.log('Total clients: ', wss.clients.size);
+	console.log('Connection established: total clients: %d', wss.clients.size);
 
 	ws.on('close', function(event) {
-		console.log('Connection closed');
-		console.log('Total clients: ', wss.clients.size);
-		var index = usersList.findIndex(function (user) {
-			return user.userUuid === ws.uuid;
+		console.log('Connection closed: total clients: %d', wss.clients.size);
+		mongo.connect(url, function(err, db) {
+			if (!err) {
+				db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
+					if (!err) {
+						var broadcast = JSON.stringify({ "type": "userLeft", "data": { "userUuid": ws.uuid } });
+						wss.clients.forEach(function each(client) {
+							if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
+								client.send(broadcast);
+						});
+					} else {
+						var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+						ws.send(message);
+					}
+				});
+			} else {
+				var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+				ws.send(message);
+			}
 		});
-		usersList.splice(index, 1);
-		var broadcast = JSON.stringify({ "type": "userLeft", "data": ws.uuid });
-		broadcastAuth(broadcast);
 	});
-
 	ws.on('message', function(event) {
-		// console.log(event);
 		type = JSON.parse(event).type;
 		switch(type) {
 			case "guest":
@@ -104,7 +94,6 @@ console.log('Total clients: ', wss.clients.size);
 														var user = { "userUuid": ws.uuid, "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username };
 														var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 														wss.clients.forEach(function each(client) {
-															console.log(client.uuid);
 															if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
 																client.send(broadcast);
 														});
@@ -133,7 +122,6 @@ console.log('Total clients: ', wss.clients.size);
 													});
 												var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 												wss.clients.forEach(function each(client) {
-													console.log(client.uuid);
 													if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
 														client.send(broadcast);
 												});
@@ -157,24 +145,6 @@ console.log('Total clients: ', wss.clients.size);
 						ws.send(message);
 					};
 				});
-				
-/*				if ( data.accessCode === "lovely" ) {
-					console.log("success");
-					ws.authenticated = true;
-					ws.uuid = guid.get();
-					// console.log(JSON.stringify(user));
-					var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
-					// console.log(message);
-					ws.send(message);
-					var user = { "isGuest": true, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username };
-					usersList.push(user);
-					var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
-					broadcastAuth(broadcast);
-				} else {
-					console.log("reject");
-					var message = JSON.stringify({ "type": "error", "data": { "reason": "Access code incorrect." } });
-					ws.send(message);
-				}*/
 				break;
 			case "login":
 				var data = JSON.parse(event).data;
@@ -205,7 +175,6 @@ console.log('Total clients: ', wss.clients.size);
 											var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username };
 											var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 											wss.clients.forEach(function each(client) {
-												console.log(client.uuid);
 												if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
 													client.send(broadcast);
 											});
