@@ -95,9 +95,9 @@ console.log('Total clients: ', wss.clients.size);
 				var data = JSON.parse(event).data;
 				mongo.connect(url, function(err, db) {
 					if (!err) {
-						db.collection("users").findOne({ "username": data.username, "isDeleted": false }, { "password": 1, "isOnline": 1 }, function (err, r) {
+						db.collection("users").findOne({ "username": data.username, "isDeleted": false }, { "password": 1, "isDeleted": 1, "isOnline": 1 }, function (err, r) {
 							if (!err) {								
-								if (r && data.password === r.password) {
+								if (r && data.password === r.password && !r.isDeleted) {
 									if (r.isOnline) {
 										wss.clients.forEach(function each(client) {
 											if(client.uuid == r._id) client.close(); // !!!! ===
@@ -110,9 +110,9 @@ console.log('Total clients: ', wss.clients.size);
 											console.log("Authenticated.");
 											//context
 											//broadcast
-/*											
-var user = { "isGuest": false, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username };
-
+									
+var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username };
+/*
 db.collection("users").findOne({ "username": data.username}, { "password": 1 }, function (err, r) {
 	
 });
