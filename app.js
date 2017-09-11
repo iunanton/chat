@@ -100,12 +100,17 @@ console.log('Total clients: ', wss.clients.size);
 											}
 										}
 									} else {
-										// no exist. open new entiti for isGuest == true
-db.collection("users").insertOne({ "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username }, function(err, r) {
-	if (!err) {
-		
-	}
-});
+										var user = { "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username };
+										db.collection("users").insertOne( user, function(err, r) {
+											if (!err) {
+												ws.authenticated = true;
+												ws.uuid = user._id;
+												console.log("Authenticated.");
+											} else {
+												var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+												ws.send(message);
+											}
+										});
 									}
 								} else {
 									var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
