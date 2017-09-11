@@ -9,6 +9,8 @@ var url = 'mongodb://mongo:27017/chat';
 
 var port = process.env.PORT || 80;
 
+messages = [];
+
 class myGuid {
 	constructor() {
 		this.index = 0;
@@ -200,38 +202,55 @@ wss.on('connection', function connection(ws, req) {
 				break;
 			case "registration":
 				var data = JSON.parse(event).data;
-				if ( data.accessCode === "lovely" ) {
-					console.log("registration");
-					mongo.connect(url, function(err, db) {
-						assert.equal(null, err);
-						var user = { "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username, "password": data.password };
-						console.log(user);
-						db.collection("users").count({ "username": user.username }, function (err, r) {
-							assert.equal(null, err);
-							assert.equal(1, r);
-							db.collection("user").insertOne( user, function(err, r) {
-								assert.equal(err, null);
-								
-								db.close();
-							});
-
-						})
-					});
-				
-					ws.authenticated = true;
-					// ws.uuid = user.userUuid;
-/*
-					var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
-					ws.send(message);
-					usersList.push(user);
-					var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
-					broadcastAuth(broadcast);
-					*/
-				} else {
-					console.log("reject");
-					var message = JSON.stringify({ "type": "error", "data": { "reason": "Access code incorrect." } });
-					ws.send(message);
-				}
+				mongo.connect(url, function(err, db) {
+					if (!err) {
+						if ( data.accessCode === "lovely" ) {
+							db.collection("users").findOne({ "username": data.username }, { "isGuest": 1, "isOnline": 1 }, function (err, r) {
+								if (!err) {
+									if (!r) {
+										var user = { "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username, "password": data.password };
+										db.collection("users").insertOne( user, function(err, r) {
+											if (!err) {
+												ws.authenticated = true;
+												ws.uuid = user._id;
+												console.log("Authenticated.");
+												db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+													if (!err) {
+														var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+														ws.send(message);
+													} else {
+														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+														ws.send(message);
+													}
+												});
+												var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
+												wss.clients.forEach(function each(client) {
+													if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
+														client.send(broadcast);
+												});
+											} else {
+												var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+												ws.send(message);
+											}
+										});
+									} else {
+										var message = JSON.stringify({ "type": "error", "data": { "reason": "This username is already in use." } });
+										ws.send(message);
+									}
+								} else {
+									var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+									ws.send(message);
+								}
+							});							
+						} else {
+							var message = JSON.stringify({ "type": "error", "data": { "reason": "Access code incorrect." } });
+							ws.send(message);
+						}
+					} else {
+						var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+						ws.send(message);
+					};
+				});
 				break;
 			/*
 MESSAGE ADD:
