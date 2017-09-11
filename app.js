@@ -3,7 +3,18 @@ const http = require('http');
 // const url = require('url');
 const WebSocket = require('ws');
 const app = express();
-// var bodyParser = require('body-parser');
+var mongo = require('mongodb').MongoClient;
+var assert = require('assert');
+var url = 'mongodb://mongo:27017';
+mongo.connect(url, function (err, db) {
+	assert.equal(null, err);
+	console.log('Connected correctly to server');
+/*	db.collection('user-data').insertOne(item, function (err, result) {
+		console.log('Item inserted');
+		db.close();
+	});*/
+	db.close();
+});
 
 var port = process.env.PORT || 80;
 
@@ -99,7 +110,7 @@ MESSAGE ADD:
 				});
 				var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": usersList[index].username };
 				messages.push(message);
-				printMessages();
+				// printMessages();
 				var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
 				// var broadcast = JSON.stringify(message);
 				// console.log(broadcast);

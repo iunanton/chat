@@ -2,6 +2,7 @@
 
 docker build -t chat .
 docker run --detach \
+	--link mongo:mongo \
 	--name=chat \
 	--publish-all \
 	--restart=always \
