@@ -73,7 +73,56 @@ console.log('Total clients: ', wss.clients.size);
 		switch(type) {
 			case "guest":
 				var data = JSON.parse(event).data;
-				if ( data.accessCode === "lovely" ) {
+				mongo.connect(url, function(err, db) {
+					if (!err) {
+						if ( data.accessCode === "lovely" ) {
+							db.collection("users").findOne({ "username": data.username }, { "isGuest": 1, "isOnline": 1 }, function (err, r) {
+								if (!err) {
+									if (r) {
+										if (!r.isGuest) {
+											var message = JSON.stringify({ "type": "error", "data": { "reason": "This username is already in use." } });
+											ws.send(message);
+										} else {
+											if (r.isOnline) {
+												var message = JSON.stringify({ "type": "error", "data": { "reason": "This username is already in use." } });
+												ws.send(message);
+											} else {
+												ws.authenticated = true;
+												ws.uuid = r._id;
+												db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
+													if (!err) {
+														console.log("Authenticated.");
+													} else {
+														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+														ws.send(message);
+													}
+												});
+											}
+										}
+									} else {
+										// no exist. open new entiti for isGuest == true
+db.collection("users").insertOne({ "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username }, function(err, r) {
+	if (!err) {
+		
+	}
+});
+									}
+								} else {
+									var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+									ws.send(message);
+								}
+							});							
+						} else {
+							var message = JSON.stringify({ "type": "error", "data": { "reason": "Access code incorrect." } });
+							ws.send(message);
+						}
+					} else {
+						var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+						ws.send(message);
+					};
+				});
+				
+/*				if ( data.accessCode === "lovely" ) {
 					console.log("success");
 					ws.authenticated = true;
 					ws.uuid = guid.get();
@@ -89,15 +138,15 @@ console.log('Total clients: ', wss.clients.size);
 					console.log("reject");
 					var message = JSON.stringify({ "type": "error", "data": { "reason": "Access code incorrect." } });
 					ws.send(message);
-				}
+				}*/
 				break;
 			case "login":
 				var data = JSON.parse(event).data;
 				mongo.connect(url, function(err, db) {
 					if (!err) {
-						db.collection("users").findOne({ "username": data.username, "isDeleted": false }, { "password": 1, "isDeleted": 1, "isOnline": 1 }, function (err, r) {
+						db.collection("users").findOne({ "isDeleted": false, "username": data.username }, { "password": 1, "isOnline": 1 }, function (err, r) {
 							if (!err) {								
-								if (r && data.password === r.password && !r.isDeleted) {
+								if (r && data.password === r.password) {
 									if (r.isOnline) {
 										wss.clients.forEach(function each(client) {
 											if(client.uuid == r._id) client.close(); // !!!! ===
@@ -109,14 +158,15 @@ console.log('Total clients: ', wss.clients.size);
 										if (!err) {
 											console.log("Authenticated.");
 											//context
+											// find all isOnline
+var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
+console.log(message);
+ws.send(message);
 											var broadcast = JSON.stringify({ "type": "userJoined", "data": { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username } });
 											wss.clients.forEach(function each(client) {
 												console.log(client.uuid);
-												if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws) {
-													console.log("sent to:");
-													console.log(client.uuid);
+												if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
 													client.send(broadcast);
-												}
 											});
 										} else {
 											var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
@@ -132,48 +182,11 @@ console.log('Total clients: ', wss.clients.size);
 								ws.send(message);						
 							}
 						});
-//						var cursor = db.collection("user").findOne( { "username": data.username}, { "password": 1 } );
-//						console.log(JSON.stringify(cursor));
 					} else {
 						var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
 						ws.send(message);			
 					}
 				});
-				// query to DB get password for username
-				/*
-				if ( data.accessCode === "lovely" ) {
-					console.log("registration");
-					mongo.connect(url, function(err, db) {
-						assert.equal(null, err);
-						var user = { "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username, "password": data.password };
-						console.log(user);
-						db.collection("users").count({ "username": user.username }, function (err, r) {
-							assert.equal(null, err);
-							assert.equal(1, r);
-							db.collection("user").insertOne( user, function(err, r) {
-								assert.equal(err, null);
-								
-								db.close();
-							});
-
-						})
-					});
-				
-					ws.authenticated = true;
-					// ws.uuid = user.userUuid;
-
-//					var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
-//					ws.send(message);
-//					usersList.push(user);
-//					var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
-//					broadcastAuth(broadcast);
-					
-				} else {
-					console.log("reject");
-					var message = JSON.stringify({ "type": "error", "data": { "reason": "Access code incorrect." } });
-					ws.send(message);
-				}
-				*/
 				break;
 			case "registration":
 				var data = JSON.parse(event).data;
@@ -215,6 +228,7 @@ MESSAGE ADD:
 {"data":{"userUuid":"59b8c877-387a-4197-9468-310e87d76545","messageBody":"........","timestamp":1504878879236,"username":"nickname1"},"channel":"/chatroom/message/add/204141"}
 			*/
 			case "message":
+				var data = JSON.parse(event).data;
 				console.log("received message");
 				var index = usersList.findIndex(function (user) {
 					return user.userUuid === ws.uuid;
