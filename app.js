@@ -78,15 +78,16 @@ console.log('Total clients: ', wss.clients.size);
 
 	ws.on('message', function(event) {
 		// console.log(event);
-		data = JSON.parse(event);
-		switch(data.type) {
+		type = JSON.parse(event).type;
+		switch(type) {
 			case "guest":
+				var data = JSON.parse(event).data;
 				if ( data.accessCode === "lovely" ) {
 					console.log("success");
 					ws.authenticated = true;
 					ws.uuid = guid.get();
 					// console.log(JSON.stringify(user));
-					var message = JSON.stringify({ "type": "success", "data": { "users": usersList, "messages": messages } } );
+					var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
 					// console.log(message);
 					ws.send(message);
 					var user = { "isGuest": true, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username };
@@ -95,7 +96,40 @@ console.log('Total clients: ', wss.clients.size);
 					broadcastAuth(broadcast);
 				} else {
 					console.log("reject");
-					var message = JSON.stringify({ "type": "reject" });
+					var message = JSON.stringify({ "type": "error" });
+					ws.send(message);
+				}
+				break;
+			case "login":
+				break;
+			case "registration":
+				var data = JSON.parse(event).data;
+				if ( data.accessCode === "lovely" ) {
+					
+mongo.connect(url, function (err, db) {
+	assert.equal(null, err);
+	console.log('Connected correctly to server');
+	db.collection('users').insertOne(item, function (err, result) {
+		console.log('Item inserted');
+		db.close();
+	});
+});
+					
+					
+					console.log("registration");
+					ws.authenticated = true;
+					ws.uuid = guid.get();
+					// console.log(JSON.stringify(user));
+					var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
+					// console.log(message);
+					ws.send(message);
+					var user = { "isGuest": true, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username };
+					usersList.push(user);
+					var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
+					broadcastAuth(broadcast);
+				} else {
+					console.log("reject");
+					var message = JSON.stringify({ "type": "error" });
 					ws.send(message);
 				}
 				break;

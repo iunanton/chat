@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-10T22:53:28+0800" >
+<meta name="date" content="2017-09-11T12:37:30+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -367,7 +367,7 @@ footer {
 
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('wss://owncloudhk.net');
+			var socket = new WebSocket('ws://172.17.0.5');
 
 			var usersList = [];
 
@@ -383,7 +383,7 @@ footer {
 				var message = JSON.parse(event.data);
 				// console.log(message);
 				switch(message.type) {
-					case "success":
+					case "context":
 						var data = message.data;
 						document.getElementById("AuthenticationForm").style.display="none";
 						usersList = data.users;
@@ -396,7 +396,7 @@ footer {
 						document.getElementById("Chat").style.display="grid";
 						console.log("Connection was established.");
 						break;
-					case "reject":
+					case "error":
 						console.log("Connection was rejected.");
 						break;
 					case "userJoined":
@@ -470,8 +470,26 @@ footer {
 			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
 				var username = document.getElementById("Username").value;
 				var accessCode = document.getElementById("AccessCode").value;
-				var message = JSON.stringify({ "type": "guest", "username": username, "accessCode": accessCode });
+				var message = JSON.stringify({ "type": "guest", "data": { "username": username, "accessCode": accessCode } });
 				socket.send(message);
+			});
+			
+			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value;
+				var password = document.getElementById("Password").value;
+				var message = JSON.stringify({ "type": "login", "data": { "username": username, "password": password } });
+				socket.send(message);
+			});
+			
+			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value;
+				var accessCode = document.getElementById("AccessCode").value;
+				var password = document.getElementById("Password").value;
+				var password2 = document.getElementById("Password2").value;
+				if (password === password2) {
+					var message = JSON.stringify({ "type": "registration", "data": { "username": username, "accessCode": accessCode, "password": password } });
+					socket.send(message);
+				}
 			});
 			
 			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
