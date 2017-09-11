@@ -8,6 +8,6 @@ ssh asus "docker stop chat"
 ssh asus "docker rm chat"
 ssh asus "docker rmi chat"
 ssh asus "docker load -i ~/chat.tar.gz"
-ssh asus "docker run --detach --name=chat --publish=32768:80 --restart=always chat"
+ssh asus "docker run --detach --link mongo:mongo --name=chat --publish=32768:80 --restart=always chat"
 rm chat.tar.gz
 

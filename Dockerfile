@@ -4,7 +4,5 @@ COPY package.json .
 RUN npm install
 COPY app.js .
 COPY index.html .
-COPY public/ public/
-COPY views/ views/
 EXPOSE 80
 CMD [ "npm", "start" ]
