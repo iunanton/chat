@@ -1,0 +1,50 @@
+// create collection
+db.createCollection("users", function(err, res) {
+	if (err) throw err;
+	console.log("Collection created!");
+	db.close();
+});					
+// insert item
+db.collection("user").insertOne( { "isGuest": true, "isDeleted": false, "userUuid": ws.uuid, "isOnline": true, "username": data.username, "password": data.password }, function (err, r) {
+	assert.equal(null, err);
+	console.log("1 document inserted");
+	db.close();
+});
+// find item
+db.collection('users').findOne( { "username": data.username }, function (err, r) {
+	assert.equal(null, err);
+	console.log(JSON.stringify(r.name));
+	db.close();
+});
+						// check if exists
+						( {  }, function (err, r) {
+							assert.equal(null, err);
+							console.log(JSON.stringify(r));
+						}
+					} );
+
+/*						db.collection('users').insertOne(user, function(err, r) {
+							assert.equal(null, err);
+							assert.equal(1, r.insertedCount);
+							collection.findOne({ $and: [ {u}, {} ] }, function(err, document) {
+								console.log(document.name);
+								db.close();
+							});
+						});
+					});
+				});
+					mongo.connect(url, function (err, db) {
+						assert.equal(null, err);
+						console.log('Connected correctly to server');
+						db.collection('users').find({ $and: [ { "isOnline": true }, { "username": { $ne: user.username } } ] }).toArray(function (err, result) {
+							// console.log('Item found');
+							assert.equal(err, null);
+							console.log(JSON.stringify(result));
+							// callback(result);
+							db.close();
+						});
+					});
+					*/
+					//> db.users.find( { $and: [ { "isOnline": true }, { "username": { $ne: "iunanton" } } ] } )
+					
+					{ "isGuest": false, "isDeleted": false, "isOnline": true, "username": "iunanton", "password": "0987654321" }

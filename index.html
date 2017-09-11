@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-11T12:37:30+0800" >
+<meta name="date" content="2017-09-11T23:05:33+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -194,8 +194,18 @@ body {
 	font-size: 14px;
 	border-radius: 2px;
 }
+
 .FormSubmit:hover {
     text-decoration: underline;
+}
+
+#FormSubmitHintArea {
+    width: 100%;
+    height: auto;
+    color: #FF7260;
+    font-size: 14px;
+    margin: 10px 0px;
+    text-align: center;
 }
 
 #Chat {
@@ -327,7 +337,7 @@ footer {
 		</div>
 		<div id="FormWrapUsername" class="FormLabelWrap" style="display: block;">
 			<label class="FormLabel" for="Username">Username:</label>
-			<input type="text" class="FormInput" id="Username" />
+			<input type="text" class="FormInput" id="Username" autofocus />
 		</div>
 		<div id="FormWrapAccessCode" class="FormLabelWrap" style="display: block;">
 			<label class="FormLabel" for="AccessCode">Access code:</label>
@@ -344,6 +354,7 @@ footer {
 		<button id="GuestFormSubmit" class="FormSubmit" style="display: block;">Chat as guest</button>
 		<button id="LoginFormSubmit" class="FormSubmit" style="display: none;">Log in</button>
 		<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
+		<div id="FormSubmitHintArea"></div>
 	</div>
 	
 	<div id="Chat" style="display: none">
@@ -397,7 +408,8 @@ footer {
 						console.log("Connection was established.");
 						break;
 					case "error":
-						console.log("Connection was rejected.");
+						var data = message.data;
+						document.getElementById("FormSubmitHintArea").innerHTML = data.reason;
 						break;
 					case "userJoined":
 						var data = message.data;
@@ -421,7 +433,7 @@ footer {
 						break;
 				};
 			};
-		
+			
 			document.getElementById("SwitchToGuestLabel").addEventListener("click", function () {
 				document.getElementById("GuestAuthenticationFormTitle").style.display="block";
 				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
@@ -470,15 +482,31 @@ footer {
 			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
 				var username = document.getElementById("Username").value;
 				var accessCode = document.getElementById("AccessCode").value;
-				var message = JSON.stringify({ "type": "guest", "data": { "username": username, "accessCode": accessCode } });
-				socket.send(message);
+				if (username && accessCode) {
+					if (username.length > 1 && username.length < 41) {
+						var message = JSON.stringify({ "type": "guest", "data": { "username": username, "accessCode": accessCode } });
+						socket.send(message);					
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
+				}
 			});
 			
 			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
 				var username = document.getElementById("Username").value;
 				var password = document.getElementById("Password").value;
-				var message = JSON.stringify({ "type": "login", "data": { "username": username, "password": password } });
-				socket.send(message);
+				if (username && password) {
+					if (username.length > 1 && username.length < 41) {
+						var message = JSON.stringify({ "type": "login", "data": { "username": username, "password": password } });
+						socket.send(message);					
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
+				}
 			});
 			
 			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
@@ -489,15 +517,20 @@ footer {
 				if (password === password2) {
 					var message = JSON.stringify({ "type": "registration", "data": { "username": username, "accessCode": accessCode, "password": password } });
 					socket.send(message);
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Entered passwords must be the same.";			
 				}
 			});
 			
-			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
-				
-			});
-			
-			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
-				
+			document.getElementById("AuthenticationForm").addEventListener("keyup", function (event) {
+				if (event.keyCode == '13') {
+					if (document.getElementById("GuestFormSubmit").style.display == "block")
+						document.getElementById("GuestFormSubmit").click();
+					if (document.getElementById("LoginFormSubmit").style.display == "block")
+						document.getElementById("LoginFormSubmit").click();
+					if (document.getElementById("RegistrationFormSubmit").style.display == "block")
+						document.getElementById("RegistrationFormSubmit").click();
+				}
 			});
 
 			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
