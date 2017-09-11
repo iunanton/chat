@@ -92,6 +92,22 @@ console.log('Total clients: ', wss.clients.size);
 												db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
 													if (!err) {
 														console.log("Authenticated.");
+														db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+															if (!err) {
+																var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+																ws.send(message);
+															} else {
+																var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+																ws.send(message);
+															}
+														});
+														var user = { "userUuid": ws.uuid, "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username };
+														var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
+														wss.clients.forEach(function each(client) {
+															console.log(client.uuid);
+															if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
+																client.send(broadcast);
+														});
 													} else {
 														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
 														ws.send(message);
@@ -106,6 +122,21 @@ console.log('Total clients: ', wss.clients.size);
 												ws.authenticated = true;
 												ws.uuid = user._id;
 												console.log("Authenticated.");
+													db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+														if (!err) {
+															var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+															ws.send(message);
+														} else {
+															var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+															ws.send(message);
+														}
+													});
+												var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
+												wss.clients.forEach(function each(client) {
+													console.log(client.uuid);
+													if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
+														client.send(broadcast);
+												});
 											} else {
 												var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
 												ws.send(message);
@@ -162,12 +193,17 @@ console.log('Total clients: ', wss.clients.size);
 									db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
 										if (!err) {
 											console.log("Authenticated.");
-											//context
-											// find all isOnline
-var message = JSON.stringify({ "type": "context", "data": { "users": usersList, "messages": messages } } );
-console.log(message);
-ws.send(message);
-											var broadcast = JSON.stringify({ "type": "userJoined", "data": { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username } });
+												db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+													if (!err) {
+														var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+														ws.send(message);
+													} else {
+														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+														ws.send(message);
+													}
+												});
+											var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username };
+											var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 											wss.clients.forEach(function each(client) {
 												console.log(client.uuid);
 												if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
