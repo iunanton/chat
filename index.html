@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-12T23:19:16+0800" >
+<meta name="date" content="2017-09-13T00:15:23+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -473,7 +473,7 @@ wR////////////8=" />
 			<textarea id="InputTextArea" maxlength="175"></textarea>
 		</div>
 		<div id="ButtonWrapper">
-			<input type="button" id="SendButton" value="Send" disabled />
+			<input type="button" id="SendButton" value="Send" />
 		</div>
 		<footer>Copyright &copy 2016<script>new Date().getFullYear()>2016&&document.write("-" + new Date().getFullYear());</script> <a target="_blank" href="http://xiaodong.com.ru" style="color: inherit">XIAODONG IT Consulting</a></footer>
 	</div>
@@ -1012,7 +1012,7 @@ wR////////////8=" />
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('wss://owncloudhk.net');
+			var socket = new WebSocket('ws://172.17.0.5');
 
 			var usersList = [];
 
@@ -1038,6 +1038,7 @@ wR////////////8=" />
 						});
 						document.getElementById("Chat").style.display="grid";
 						document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
+						document.getElementById("InputTextArea").focus();
 						console.log("Connection was established.");
 						break;
 					case "error":
@@ -1167,8 +1168,39 @@ wR////////////8=" />
 						document.getElementById("RegistrationFormSubmit").click();
 				}
 			});
-
+			
+			document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
+				if (document.getElementById("InputTextArea").value && event.keyCode == '13') {
+					document.getElementById("SendButton").click();
+				}
+			});
+			
+			document.getElementById("InputTextArea").addEventListener("keypress", function (event) {
+				if (event.keyCode == '13') {
+					event.preventDefault();
+					return false;
+				}
+			});
+			
 			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
+				if (event.keyCode == '13') {
+					document.getElementById("InputTextArea").value="";
+				}
+			});
+			
+/*			
+			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
+				if (document.getElementById("InputTextArea").value == "\n") {
+					document.getElementById("InputTextArea").value = "";
+				}
+				if (document.getElementById("InputTextArea").value) {
+					document.getElementById("SendButton").disabled = false;
+				} else {
+					document.getElementById("SendButton").disabled = true;
+				}
+			});
+*/
+/*			document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
 				if (document.getElementById("InputTextArea").value) {
 					document.getElementById("SendButton").disabled = false;
 					if (event.keyCode == '13') {
@@ -1177,11 +1209,11 @@ wR////////////8=" />
 				} else {
 					document.getElementById("SendButton").disabled = true;
 				}
-			});
+			});*/
 
 			document.getElementById("SendButton").addEventListener("click", function () {
 				var messageBody = document.getElementById("InputTextArea").value;
-				document.getElementById("InputTextArea").value='';
+				document.getElementById("InputTextArea").value="";
 				var message = JSON.stringify({ "type": "message", "data": { "messageBody": messageBody } });
 				socket.send(message);
 			})
