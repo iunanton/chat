@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-12T23:03:20+0800" >
+<meta name="date" content="2017-09-12T23:19:16+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -237,6 +237,61 @@ wR////////////8=" />
 			overflow-y: scroll;
 		}
 		
+		.MessageWrapper {
+			margin: 0px;
+			margin-left: 5px;
+			padding: 3px 0;
+		}
+		
+		.MessageUsername {
+			float: left;
+			color: #3B5897;
+			font-size: 11px;
+			font-weight: bold;
+		}
+		
+		.MessageTime {
+			float: left;
+			color: #898989;
+			font-size: 9px;
+			margin-top: 1px;
+			margin-left: 3px;
+		}
+		
+		.MessageBody {
+			margin-top: 4px;
+			font-size: 15px;
+			clear: both;
+		}
+		
+		#InputTextWrapper {
+			grid-column: 1 / 2;
+			grid-row: 3 / 4;
+		}
+		
+		#InputTextArea {
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			resize: none;
+		}
+		
+		#ButtonWrapper {
+		  grid-column: 1 / 2;
+		  grid-row: 4 / 5;
+		  text-align: right;
+		}
+		
+		#SendButton {
+			width: auto;
+			height: 100%;
+			padding: 0 10px;
+			border: thin solid #4B79A1;
+			background-color: #4B79A1;
+			color: white;
+			cursor: pointer;
+		}
+		
 		footer {
 			grid-column: 1 / 2;
 			grid-row: 5 / 6;
@@ -334,11 +389,10 @@ wR////////////8=" />
 			font-size: 15px;
 			clear: both;
 		}
-		#input-text-wrapper {
+		#InputTextWrapper {
 			grid-column: 3 / 4;
 			grid-row: 3 / 4;
 			border: thin solid #696969;
-			background-color: lightsalmon;
 		}
 		#InputTextArea {
 			box-sizing:border-box;
@@ -346,7 +400,7 @@ wR////////////8=" />
 			width: 100%;
 			resize: none;
 		}
-		#button-wrapper {
+		#ButtonWrapper {
 		  grid-column: 3 / 4;
 		  grid-row: 4 / 5;
 		  text-align: right;
@@ -415,11 +469,11 @@ wR////////////8=" />
 			<div id="UsersListHeader">People in Chatroom</div>
 		</div>
 		<div id="MessagesWrapper"></div>
-		<div id="input-text-wrapper">
+		<div id="InputTextWrapper">
 			<textarea id="InputTextArea" maxlength="175"></textarea>
 		</div>
-		<div id="button-wrapper">
-			<input type="button" id="SendButton" value="Send" />
+		<div id="ButtonWrapper">
+			<input type="button" id="SendButton" value="Send" disabled />
 		</div>
 		<footer>Copyright &copy 2016<script>new Date().getFullYear()>2016&&document.write("-" + new Date().getFullYear());</script> <a target="_blank" href="http://xiaodong.com.ru" style="color: inherit">XIAODONG IT Consulting</a></footer>
 	</div>
@@ -1115,8 +1169,13 @@ wR////////////8=" />
 			});
 
 			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
-				if (event.keyCode == '13') {
-					document.getElementById("SendButton").click();
+				if (document.getElementById("InputTextArea").value) {
+					document.getElementById("SendButton").disabled = false;
+					if (event.keyCode == '13') {
+						document.getElementById("SendButton").click();
+					}
+				} else {
+					document.getElementById("SendButton").disabled = true;
 				}
 			});
 
