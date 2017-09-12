@@ -304,6 +304,15 @@ wss.on('connection', function connection(ws, req) {
 		};
 		
 	});
+	
+	ws.on('pong', function () {
+		console.log('pong ' + ws.uuid);
+	});
+	
+	setInterval(function () {
+		console.log('ping ' + ws.uuid);
+		ws.ping();
+	}, 5000);
 
 });
 
