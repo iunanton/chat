@@ -45,6 +45,7 @@ wss.on('connection', function connection(ws, req) {
 			}
 		});
 	});
+	
 	ws.on('message', function(event) {
 		type = JSON.parse(event).type;
 		switch(type) {
@@ -265,10 +266,7 @@ wss.on('connection', function connection(ws, req) {
 					};
 				});
 				break;
-			/*
-MESSAGE ADD:
-{"data":{"userUuid":"59b8c877-387a-4197-9468-310e87d76545","messageBody":"........","timestamp":1504878879236,"username":"nickname1"},"channel":"/chatroom/message/add/204141"}
-			*/
+
 			case "message":
 				var data = JSON.parse(event).data;
 				console.log("received message");
@@ -302,14 +300,13 @@ MESSAGE ADD:
 						ws.send(message);
 					}
 				});
-				
 				break;
 		};
 		
 	});
 
 });
- 
+
 server.listen(port, function listening() {
   console.log('Listening on %d', server.address().port);
 });
