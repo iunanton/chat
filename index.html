@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-12T22:02:47+0800" >
+<meta name="date" content="2017-09-12T22:08:20+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -333,35 +333,37 @@ footer {
 </style>
 </head>
 <body>
-	<div id="AuthenticationForm" style="display: block">
-		<div class="FormLabelWrap" style="margin: 2px 0px 20px 0px; height: 27px;">
-			<div id="GuestAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Guest</div>
-			<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Log in</div>
-			<div id="RegistrationAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Sign up</div>
-			<div id="SwitchToRegistrationLabel" class="SwitchFormsLabel" style="display: block;">Sign up</div>
-			<div id="SwitchToLoginLabel" class="SwitchFormsLabel" style="display: block;">Log in</div>
-			<div id="SwitchToGuestLabel" class="SwitchFormsLabel" style="display: none;">Guest</div>
+	<div id="Authentication" style="display: grid">
+		<div id="AuthenticationForm">
+			<div class="FormLabelWrap" style="margin: 2px 0px 20px 0px; height: 27px;">
+				<div id="GuestAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Guest</div>
+				<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Log in</div>
+				<div id="RegistrationAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Sign up</div>
+				<div id="SwitchToRegistrationLabel" class="SwitchFormsLabel" style="display: block;">Sign up</div>
+				<div id="SwitchToLoginLabel" class="SwitchFormsLabel" style="display: block;">Log in</div>
+				<div id="SwitchToGuestLabel" class="SwitchFormsLabel" style="display: none;">Guest</div>
+			</div>
+			<div id="FormWrapUsername" class="FormLabelWrap" style="display: block;">
+				<label class="FormLabel" for="Username">Username:</label>
+				<input type="text" class="FormInput" id="Username" autofocus />
+			</div>
+			<div id="FormWrapAccessCode" class="FormLabelWrap" style="display: block;">
+				<label class="FormLabel" for="AccessCode">Access code:</label>
+				<input type="password" class="FormInput" id="AccessCode" />
+			</div>
+			<div id="FormWrapPassword" class="FormLabelWrap" style="display: none;">
+				<label class="FormLabel" for="Password">Password:</label>
+				<input type="password" class="FormInput" id="Password" />
+			</div>
+			<div id="FormWrapPassword2" class="FormLabelWrap" style="display: none;">
+				<label class="FormLabel" for="Password2">Password: (enter again)</label>
+				<input type="password" class="FormInput" id="Password2" />
+			</div>
+			<button id="GuestFormSubmit" class="FormSubmit" style="display: block;">Chat as guest</button>
+			<button id="LoginFormSubmit" class="FormSubmit" style="display: none;">Log in</button>
+			<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
+			<div id="FormSubmitHintArea"></div>
 		</div>
-		<div id="FormWrapUsername" class="FormLabelWrap" style="display: block;">
-			<label class="FormLabel" for="Username">Username:</label>
-			<input type="text" class="FormInput" id="Username" autofocus />
-		</div>
-		<div id="FormWrapAccessCode" class="FormLabelWrap" style="display: block;">
-			<label class="FormLabel" for="AccessCode">Access code:</label>
-			<input type="password" class="FormInput" id="AccessCode" />
-		</div>
-		<div id="FormWrapPassword" class="FormLabelWrap" style="display: none;">
-			<label class="FormLabel" for="Password">Password:</label>
-			<input type="password" class="FormInput" id="Password" />
-		</div>
-		<div id="FormWrapPassword2" class="FormLabelWrap" style="display: none;">
-			<label class="FormLabel" for="Password2">Password: (enter again)</label>
-			<input type="password" class="FormInput" id="Password2" />
-		</div>
-		<button id="GuestFormSubmit" class="FormSubmit" style="display: block;">Chat as guest</button>
-		<button id="LoginFormSubmit" class="FormSubmit" style="display: none;">Log in</button>
-		<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
-		<div id="FormSubmitHintArea"></div>
 	</div>
 	
 	<div id="Chat" style="display: none">
@@ -934,7 +936,7 @@ footer {
 				switch(message.type) {
 					case "context":
 						var data = message.data;
-						document.getElementById("AuthenticationForm").style.display="none";
+						document.getElementById("Authentication").style.display="none";
 						usersList = data.users;
 						updateUsersList();
 						data.messages.forEach(function (data) {
