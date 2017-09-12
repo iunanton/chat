@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-13T00:15:23+0800" >
+<meta name="date" content="2017-09-13T00:52:01+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -473,7 +473,7 @@ wR////////////8=" />
 			<textarea id="InputTextArea" maxlength="175"></textarea>
 		</div>
 		<div id="ButtonWrapper">
-			<input type="button" id="SendButton" value="Send" />
+			<input type="button" id="SendButton" value="Send" disabled />
 		</div>
 		<footer>Copyright &copy 2016<script>new Date().getFullYear()>2016&&document.write("-" + new Date().getFullYear());</script> <a target="_blank" href="http://xiaodong.com.ru" style="color: inherit">XIAODONG IT Consulting</a></footer>
 	</div>
@@ -1170,8 +1170,11 @@ wR////////////8=" />
 			});
 			
 			document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
-				if (document.getElementById("InputTextArea").value && event.keyCode == '13') {
-					document.getElementById("SendButton").click();
+				if (document.getElementById("InputTextArea").value) {
+					if (event.keyCode == '13') {
+						document.getElementById("SendButton").disabled = false;
+						document.getElementById("SendButton").click();
+					}
 				}
 			});
 			
@@ -1183,33 +1186,15 @@ wR////////////8=" />
 			});
 			
 			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
-				if (event.keyCode == '13') {
-					document.getElementById("InputTextArea").value="";
-				}
-			});
-			
-/*			
-			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
-				if (document.getElementById("InputTextArea").value == "\n") {
-					document.getElementById("InputTextArea").value = "";
-				}
 				if (document.getElementById("InputTextArea").value) {
 					document.getElementById("SendButton").disabled = false;
 				} else {
 					document.getElementById("SendButton").disabled = true;
-				}
-			});
-*/
-/*			document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
-				if (document.getElementById("InputTextArea").value) {
-					document.getElementById("SendButton").disabled = false;
 					if (event.keyCode == '13') {
-						document.getElementById("SendButton").click();
+						document.getElementById("InputTextArea").value="";
 					}
-				} else {
-					document.getElementById("SendButton").disabled = true;
 				}
-			});*/
+			});
 
 			document.getElementById("SendButton").addEventListener("click", function () {
 				var messageBody = document.getElementById("InputTextArea").value;
