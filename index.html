@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-13T01:34:54+0800" >
+<meta name="date" content="2017-09-13T02:44:20+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -216,7 +216,7 @@ wR////////////8=" />
 			display: grid;
 			height: 100%;
 			grid-template-columns: auto;
-			grid-template-rows: 40px auto 60px 25px 32px;
+			grid-template-rows: 40px auto 60px 25px 22px;
 			background-color: inherit;
 			color: inherit;
 		}
@@ -318,8 +318,7 @@ wR////////////8=" />
 		footer {
 			grid-column: 1 / 2;
 			grid-row: 5 / 6;
-			padding: 10px;
-			background-color: #DDD;
+			padding: 5px;
 			font-size: 10px;
 			text-align: left;
 		}
@@ -1145,7 +1144,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 						var data = message.data;
 						var date = new Date(data.timestamp);
 						document.getElementById("sound").play();
-						document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + date.getHours() + ':' + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
+						document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
 						document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
 						break;
 				};
