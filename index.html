@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-13T01:30:25+0800" >
+<meta name="date" content="2017-09-13T01:34:54+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1114,7 +1114,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 						updateUsersList();
 						data.messages.forEach(function (data) {
 							var date = new Date(data.timestamp);
-							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + date.getHours() + ':' + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
+							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
 						});
 						document.getElementById("HeaderUsername").innerHTML = document.getElementById("Username").value;
 						document.getElementById("Chat").style.display="grid";
