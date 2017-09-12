@@ -155,8 +155,8 @@ wss.on('connection', function connection(ws, req) {
 							if (!err) {								
 								if (r && data.password === r.password) {
 									if (r.isOnline) {
-										wss.clients.forEach(function each(client) {
-											if(client.uuid == r._id) client.close(); // !!!! ===
+										wss.clients.forEach(function each(client) { 
+											if(r._id.equals(client.uuid)) client.close();
 										});
 									};
 									ws.authenticated = true;
