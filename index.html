@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-12T23:00:37+0800" >
+<meta name="date" content="2017-09-12T23:03:20+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1113,11 +1113,6 @@ wR////////////8=" />
 						document.getElementById("RegistrationFormSubmit").click();
 				}
 			});
-			
-			document.body.addEventListener("resize", function (event) {
-				document.getElementById("MessagesWrapper").scrollTop = document.getElementById("Chat").scrollHeight;
-				//$content.scrollTop($container.height());
-			})
 
 			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
 				if (event.keyCode == '13') {
