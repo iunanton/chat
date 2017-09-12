@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-13T00:53:52+0800" >
+<meta name="date" content="2017-09-13T01:30:25+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -216,7 +216,7 @@ wR////////////8=" />
 			display: grid;
 			height: 100%;
 			grid-template-columns: auto;
-			grid-template-rows: 50px auto 60px 25px 32px;
+			grid-template-rows: 40px auto 60px 25px 32px;
 			background-color: inherit;
 			color: inherit;
 		}
@@ -224,9 +224,32 @@ wR////////////8=" />
 		header {
 		  grid-column: 1 / 2;
 		  grid-row: 1 / 2;
-		  background-color: #FFA366;
 		}
 		
+		#HeaderUserArea {
+			float: left;
+			margin-left: 5px;
+		}
+
+		#HeaderAvatar {
+			float: left;
+			width: 32px;
+			height: 32px;
+			display: block;
+			margin-top: 4px;
+		}
+		
+		#HeaderUsername {
+			float: left;
+			margin-left: 10px;
+			margin-top: 11px;
+			font-size: 17px;
+		}
+		
+		#HeaderLogo {
+			float: right;
+		}
+				
 		#UsersList {
 			display: none;
 		}
@@ -307,16 +330,38 @@ wR////////////8=" />
 			display: grid;
 			height: 100vh;
 			grid-template-columns: 1fr 250px 800px 1fr;
-			grid-template-rows: 50px auto 60px 25px 34px;
+			grid-template-rows: 40px auto 60px 25px 34px;
 			grid-gap: 5px;
 			background-color: inherit;
-			color: #444;
+			color: inherit;
 		}
 		
 		header {
 		  grid-column: 1 / 5;
 		  grid-row: 1 / 2;
-		  color: #FFA366;
+		}
+		
+		#HeaderUserArea {
+			float: left;
+		}
+
+		#HeaderAvatar {
+			float: left;
+			width: 32px;
+			height: 32px;
+			display: block;
+			margin-top: 4px;
+		}
+		
+		#HeaderUsername {
+			float: left;
+			margin-left: 10px;
+			margin-top: 11px;
+			font-size: 17px;
+		}
+		
+		#HeaderLogo {
+			float: right;
 		}
 		
 		#UsersList {
@@ -463,7 +508,42 @@ wR////////////8=" />
 	
 	<div id="Chat" style="display: none">
 		<header>
-			<h1>Chat</h1>
+			<div id="HeaderUserArea">
+				<img id="HeaderAvatar" src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAZfSURBVGhD7VnZbhRHFD29z3iwMV4A2xDbhD1A
+QqSQKEoeyf/lQ/IB+QKkvPCCUBLiEMnExAZnxvYsvXfOrZ6eGRMznq42ixAltWdxT9c995576tYt
+48efNjJ8AMP8ADAoCB+BvG+R/BiRUhHJ3ryenGhExN5M/ZHX/kXEAkO+H16l3DDRzZWBFMYrABxJ
+miGMY0RRjNDvIgl9RHGqrjQzCMbIgfbBTWTlBDcZVdaRwngYhjI8TWMsTJto1CzUPRvLizOIkxTb
+u22+Jth62YNpmvCjDIZZg2URVH8YfEaVURkITUIU9HBluYZzC6cwVa/TSPF8pkCIeZZlqVd+zf8B
+3W6ARxs72O04cG1TRUdGFTDa1Cryt9tp4/alaXy6dg6u5yGOCYA0kldDmW8giRNSKyHlUgRhAstx
+cX19ES46/Byqe6oObSDC8l4Q47O1Bs4vziIMImW4eDz37ohp/DD0NqNFmtU8F/e/vYKbqzVGtDOI
+ii4gLSBCG0nchhNi/cI8ElLosOXjzTGYJxLRnh9hptFAnObUqzK0gMiEcRxhcdalQWZOIM1krddt
+TDlxX6711xtNIAZcw8ety0sqoctEY9TrEhXbsnH5wgzzJ+G/3jYQel/WA6FXlSFRLBbJNImrPEqv
++s0yqhJ5HQZBZcFJuYAunZ2FBQGiSRDdX9KPSJgZIqe5xFYbkl6mLDL6zNJ1AdeGRJSL+VFl9j5+
+WWMiSRFDH4lWLGU6x8p4WdVCIZRgJA46PkyLCljhaVpAhEwpWX3AUqMKtSTRhVatAz6HK2kVkmoB
+yWUTaLbalZNdwDT3OqzDWOa/9YjQezUrwq3rF1nxVpmekWWaff35GhyTNVcFOdeKiKqzQpNVrF/B
+h8Ofxkz2IJSFVf9x2kCi1MReOyAl9GeXBVF+3u4ESA2bOPSjqwnEgMeS/dn2ntocFauzjj9lo7VP
+hxgEog9DcylVCxj/7LQicjxRGyadIQ5wuLFqHoj8vgPVEqMNqozlNPDzg6fw1V6k3BAQNo1/8PAp
+njcTvh/ds5R7ltytSa18IrICht3AbovyWTIsQiPZx+/7Bhyvrh3VArI2kHz/YcC2bWztdlXSDpoR
+EzjUIvDWQRdxJpsqKXXKxvTwJNpAcnqxscAn7HVStCnFkwqYABYgWzttioVTKckrR6R4gKzyplXD
+n89aivPHRaUoS3p+gO1mrADp7i5HY1IpIoOo2AYTNkZzXzx8PBiH9c3jjRfML6/fZ5mAi8fccgJA
+8rLRcWt4+FsTHalkx3BMROHxky28aJtKqSqmxgBeZSDqSWIPr5Tdw18ebY2hWEagXfy1E8N1nfyn
+kybWm45IjmNYzE+f8lRH5CgNkn1+reapyvmkx4lEJK+ADS6MIeZnuEEyju6siPNdx8b8tJEXiVzG
+jhOHSQFXAlI06oIoQhwe4MYFB6sr86pd+roh7aMvri1jbYEVdO8AQZSvIVXqNcWKMt34XDpl0nyn
+7vd8NNwY11ZnscxOSELqSEk+jvtFBES5MtZpG89eYuPvNvNrCp6bV8BFm6hM/kwMJDcgL7R7BDBT
+i3FjfQ6Lc6fVmYi0TVVelEhetTCqTn2Kzef/4skmI5S6qNc9ekoiNbkYjAUyyl9pxgU+AdQTBWBh
+lmcf3N4VBz1lvFfQbhjhfKWXBvg/2y38urmPXuRQGNxDe5RxcxwJZHQCORwI2IgTCl1fPcMzkNMs
+9tgKIggd41+XO4XTBoB29vH7ZgtdAnJdV+3pi3HUvP8DMoyCKEsEzwpx7eKM6gYKKFGo4p6TBCJG
+Fg6U9wJIPu/s7pNye+hEFhWPERJ5Enl/hcKHgIyeA6ZxD5fOT/HYYI4lOhuajEIJ+k+qmmPvE9qq
+4znmy/MXe/hDcihzCYhC8QqYgfzm8id7hBRTVoDv7pzD5dWzBG/mR2jVqmwtYDKniEiSGlTFM/j+
+yxUsnU7VuUoRweLBI0DyE9kpO8Q3d1YohTxJOkZKtawr+aOiQaGUkUJ2++oyLs6R9jx8zcHkD1RA
+FKUEftzBVzfP58fIfT0vOe8bvp0Hr2yc37q6hFkvpGoq64dA5J1Pab17dQGW7ShFeh9HkeBC9bs3
+lllNdAdmqoj4PNj/4d4KFuankfImadG8r0PApGSQR0m+f+8TZbuiVq/XUV/IUDXSO0jqsk4zqcHq
+AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
+				<div id="HeaderUsername"></div>
+			</div>
+			<div id="HeaderLogo"><h1>Chat</h1></div>
 		</header>
 		<div id="UsersList">
 			<div id="UsersListHeader">People in Chatroom</div>
@@ -1012,7 +1092,7 @@ wR////////////8=" />
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('ws://172.17.0.5');
+			var socket = new WebSocket('wss://owncloudhk.net');
 
 			var usersList = [];
 
@@ -1036,6 +1116,7 @@ wR////////////8=" />
 							var date = new Date(data.timestamp);
 							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + date.getHours() + ':' + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
 						});
+						document.getElementById("HeaderUsername").innerHTML = document.getElementById("Username").value;
 						document.getElementById("Chat").style.display="grid";
 						document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
 						document.getElementById("InputTextArea").focus();
