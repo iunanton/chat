@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-12T05:46:09+0800" >
+<meta name="date" content="2017-09-12T22:02:47+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -13,6 +13,7 @@
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
 <meta http-equiv="content-style-type" content="text/css">
 <meta http-equiv="expires" content="0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=1" />
 <link rel="shortcut icon" type="image/x-icon" href="data:image/x-icon;base64,
 AAABAAEAICAAAAEAIACoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -92,121 +93,127 @@ AABAAQAAQAMAAEADAABABwAAQA+AAEAPgAAAH8AAAB/AAAA/4AAAf/AAgH/4AID//AAD//4AB///
 wR////////////8=" />
 <link href="" rel="stylesheet" type="text/css">
 <style type="text/css">
-html {
-	height: 100hv;
-}
+	html {
+		height: 100%;
+	}
+	
+	body {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		background-color: #FFFFFF;
+		color: #505050;
+		font-family: arial, helvetica, sans-serif;
+	}
+	
+	#Authentication {
+		display: grid;
+		height: 100%;
+		grid-template-columns: 1fr 250px 1fr;
+		grid-template-rows: 1fr auto 1fr;
+		background-color: inherit;
+		color: inherit;
+	}
+	
+	#AuthenticationForm {
+		grid-column: 2 / 3;
+		grid-row: 2 / 3;
+	}
+	
+	.FormLabelWrap {
+		display: block;
+		clear: both;
+		width: 100%;
+		margin: 5px 0px;
+	}
+	
+	.AuthenticationFormTitle {
+		float: left;
+		margin: 0px 0px 10px 0px;
+		font-size: 18px;
+		text-align: left;
+		font-weight: bold;
+	}
+	
+	.SwitchFormsLabel {
+		margin: 4px 0px auto 10px;
+		cursor: pointer;
+		float: right;
+		color: #129793;
+		font-weight: bold;
+		font-family: arial;
+		font-size: 14px;
+	}
+	
+	.SwitchFormsLabel:hover {
+	    text-decoration: underline;
+	}
+	
+	.FormLabel {
+		float: left;
+		font-weight: bold;
+		font-size: 14px;
+		font-family: arial;
+		margin-bottom: 5px;
+	}
+	
+	.FormInput {
+	    width: 96%;
+	    border: 1px solid #505050;
+	    padding: 2px 2%;
+	    height: 20px;
+	    margin-bottom: 10px;
+	    outline: none;
+	    clear: both;
+	}
+	
+	#GuestFormSubmit {
+		background-color: #FFF5C3;
+		border-color: #FFF5C3;
+		color: #505050;
+	}
+	
+	#LoginFormSubmit {
+		background-color: #9BD7D5;
+		border-color: #9BD7D5;
+		color: #FFFFFF;
+	}
+	
+	#RegistrationFormSubmit {
+		background-color: #FF7260;
+		border-color: #FF7260;
+		color: #FFFFFF;
+	}
+	
+	.FormSubmit {
+		cursor: pointer;
+		display: block;
+		clear: both;
+		width: auto;
+		height: 25px;
+		font-weight: bold;
+		border: 1px solid;
+		margin: 15px auto;
+		font-size: 14px;
+		border-radius: 2px;
+	}
+	
+	.FormSubmit:hover {
+	    text-decoration: underline;
+	}
+	
+	#FormSubmitHintArea {
+	    width: 100%;
+	    height: auto;
+	    color: #FF7260;
+	    font-size: 14px;
+	    margin: 10px 0px;
+	    text-align: center;
+	}
 
-body {
-	height: 100hv;
-	background-color: #FFFFFF;
-	color: #505050;
-	margin: 0;
-	padding: 0;
-	font-family: arial, helvetica, sans-serif;
-}
-
-#AuthenticationForm {
-	width: 250px;
-	margin: 100px auto;
-	padding: 10px;
-}
-
-.FormLabelWrap {
-	clear: both;
-	width: 100%;
-	margin: 5px 0px;
-}
-
-.AuthenticationFormTitle {
-	float: left;
-	margin: 0px 0px 10px 0px;
-	font-size: 18px;
-	text-align: left;
-	font-weight: bold;
-}
-
-.SwitchFormsLabel {
-	margin: 4px 0px auto 10px;
-	cursor: pointer;
-	float: right;
-	color: #129793;
-	font-weight: bold;
-	font-family: arial;
-	font-size: 14px;
-}
-
-.SwitchFormsLabel:hover {
-    text-decoration: underline;
-}
-
-.FormLabelWrap {
-	display: block;
-	clear: both;
-	width: 100%;
-	margin: 5px 0px;
-}
-
-.FormLabel {
-	float: left;
-	font-weight: bold;
-	font-size: 14px;
-	font-family: arial;
-	margin-bottom: 5px;
-}
-
-.FormInput {
-    width: 96%;
-    border: 1px solid #505050;
-    padding: 2px 2%;
-    height: 20px;
-    margin-bottom: 10px;
-    outline: none;
-    clear: both;
-}
-
-#GuestFormSubmit {
-	background-color: #FFF5C3;
-	border-color: #FFF5C3;
-	color: #505050;
-}
-
-#LoginFormSubmit {
-	background-color: #9BD7D5;
-	border-color: #9BD7D5;
-	color: #FFFFFF;
-}
-
-#RegistrationFormSubmit {
-	background-color: #FF7260;
-	border-color: #FF7260;
-	color: #FFFFFF;
-}
-
-.FormSubmit {
-	cursor: pointer;
-	display: block;
-	clear: both;
-	width: auto;
-	height: 25px;
-	font-weight: bold;
-	border: 1px solid;
-	margin: 15px auto;
-	font-size: 14px;
-	border-radius: 2px;
-}
-
-.FormSubmit:hover {
-    text-decoration: underline;
-}
-
-#FormSubmitHintArea {
-    width: 100%;
-    height: auto;
-    color: #FF7260;
-    font-size: 14px;
-    margin: 10px 0px;
-    text-align: center;
-}
+	@media only screen and (max-width: 568px) {
+		
+	}
 
 #Chat {
 	display: grid;
