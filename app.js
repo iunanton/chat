@@ -22,12 +22,12 @@ wss.on('connection', function connection(ws, req) {
 	ws.authenticated = false;
 	// console.log("set timeout... " + Date.now());
 	// ws.timeout = setTimeout(keepAlive, 10000, ws);
-	console.log('Connection established: total clients: %d', wss.clients.size);
+	console.log("%s Connection established: total clients: %d", Date.now(), wss.clients.size);
 
 	ws.on('close', function(event) {
 		// console.log("clear timeout... " + Date.now());
 		// clearTimeout(ws.timeout);
-		// console.log('Connection closed: total clients: %d', wss.clients.size);
+		console.log("%s Connection closed: total clients: %d, uuid: %s", Date.now(), wss.clients.size, ws.uuid);
 		mongo.connect(url, function(err, db) {
 			if (!err) {
 				db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
@@ -76,7 +76,7 @@ wss.on('connection', function connection(ws, req) {
 												ws.uuid = r._id;
 												db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
 													if (!err) {
-														console.log("Authenticated.");
+														console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
 														db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
 															if (!err) {
 																db.collection("messages").find().toArray(function(err, messages) {
@@ -112,23 +112,23 @@ wss.on('connection', function connection(ws, req) {
 											if (!err) {
 												ws.authenticated = true;
 												ws.uuid = user._id;
-												console.log("Authenticated.");
-													db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
-														if (!err) {
-															db.collection("messages").find().toArray(function(err, messages) {
-																if (!err) {
-																	var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
-																	ws.send(message);
-																} else {
-																	var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-																	ws.send(message);
-																}
-															});
-														} else {
-															var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-															ws.send(message);
-														}
-													});
+												console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
+												db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+													if (!err) {
+														db.collection("messages").find().toArray(function(err, messages) {
+															if (!err) {
+																var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+																ws.send(message);
+															} else {
+																var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+																ws.send(message);
+															}
+														});
+													} else {
+														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+														ws.send(message);
+													}
+												});
 												var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 												wss.clients.forEach(function each(client) {
 													if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
@@ -171,23 +171,23 @@ wss.on('connection', function connection(ws, req) {
 									ws.uuid = r._id;
 									db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
 										if (!err) {
-											console.log("Authenticated.");
-												db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
-													if (!err) {
-														db.collection("messages").find().toArray(function(err, messages) {
-															if (!err) {
-																var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
-																ws.send(message);
-															} else {
-																var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-																ws.send(message);
-															}
-														});
-													} else {
-														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-														ws.send(message);
-													}
-												});
+											console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
+											db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+												if (!err) {
+													db.collection("messages").find().toArray(function(err, messages) {
+														if (!err) {
+															var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+															ws.send(message);
+														} else {
+															var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+															ws.send(message);
+														}
+													});
+												} else {
+													var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+													ws.send(message);
+												}
+											});
 											var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username };
 											var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 											wss.clients.forEach(function each(client) {
@@ -227,7 +227,7 @@ wss.on('connection', function connection(ws, req) {
 											if (!err) {
 												ws.authenticated = true;
 												ws.uuid = user._id;
-												console.log("Authenticated.");
+												console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
 												db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
 													if (!err) {
 														db.collection("messages").find().toArray(function(err, messages) {
@@ -276,7 +276,7 @@ wss.on('connection', function connection(ws, req) {
 
 			case "message":
 				var data = JSON.parse(event).data;
-				console.log("received message");
+				console.log("%s Message received: uuid: %s", Date.now(), ws.uuid);
 				mongo.connect(url, function(err, db) {
 					if (!err) {
 						db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
