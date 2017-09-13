@@ -27,7 +27,7 @@ wss.on('connection', function connection(ws, req) {
 	ws.on('close', function(event) {
 		// console.log("clear timeout... " + Date.now());
 		// clearTimeout(ws.timeout);
-		console.log("%s Connection closed: total clients: %d, uuid: %s", Date.now(), wss.clients.size, ws.uuid);
+		console.log("%s Connection closed: uuid: %s, total clients: %d", Date.now(), ws.uuid, wss.clients.size);
 		mongo.connect(url, function(err, db) {
 			if (!err) {
 				db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
