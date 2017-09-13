@@ -1,6 +1,5 @@
 const express = require('express');
 const http = require('http');
-// const url = require('url');
 const WebSocket = require('ws');
 const app = express();
 var mongo = require('mongodb').MongoClient;
@@ -22,18 +21,12 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws, req) {
 	ws.authenticated = false;
 	console.log("set timeout... " + Date.now());
-	ws.heartbeat = false;
 	ws.timeout = setTimeout(keepAlive, 10000, ws);
 	console.log('Connection established: total clients: %d', wss.clients.size);
 
 	ws.on('close', function(event) {
-		console.log("clear timeout...");
-		if (ws.heartbeat) {
-			clearInterval(ws.timeout);
-			ws.heartbeat = false;
-		} else {
-			clearTimeout(ws.timeout);
-		};
+		console.log("clear timeout... " + Date.now());
+		clearTimeout(ws.timeout);
 		console.log('Connection closed: total clients: %d', wss.clients.size);
 		mongo.connect(url, function(err, db) {
 			if (!err) {
@@ -58,12 +51,7 @@ wss.on('connection', function connection(ws, req) {
 	
 	ws.on('message', function(event) {
 		console.log("clear timeout... " + Date.now());
-		if (ws.heartbeat) {
-			clearInterval(ws.timeout);
-			ws.heartbeat = false;
-		} else {
-			clearTimeout(ws.timeout);
-		};
+		clearTimeout(ws.timeout);
 		console.log("set timeout... " + Date.now());
 		ws.timeout = setTimeout(keepAlive, 10000, ws);
 		type = JSON.parse(event).type;
@@ -289,8 +277,6 @@ wss.on('connection', function connection(ws, req) {
 			case "message":
 				var data = JSON.parse(event).data;
 				console.log("received message");
-				
-				// get username from db
 				mongo.connect(url, function(err, db) {
 					if (!err) {
 						db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
@@ -323,30 +309,17 @@ wss.on('connection', function connection(ws, req) {
 		};
 		
 	});
-	
-	ws.on('pong', function () {
-		ws.alive = true;
-		console.log('pong ' + ws.uuid + ' ' + Date.now());
-	});
-	
+
 	function keepAlive(ws) {
 		console.log("time is up: start heartbeat algorithm... " + Date.now());
-		ws.heartbeat = true;
-		ws.alive = false;
 		ws.ping();
-		ws.timeout = setInterval(heartbeat, 5000, ws);
+		ws.timeout = setTimeout(heartbeat, 5000, ws);
 	}
 	
 	function heartbeat(ws) {
-		if (ws.alive) {
-			ws.alive = false;
-			ws.ping();
-			console.log("heartbeat... " + Date.now());
-		} else {
-			ws.close();
-			console.log("no response ... close " + Date.now());
-		}
-		
+		ws.ping();
+		ws.timeout = setTimeout(heartbeat, 5000, ws);
+		console.log("heartbeat... " + Date.now());
 	}
 
 });
