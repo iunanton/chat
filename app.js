@@ -20,14 +20,14 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws, req) {
 	ws.authenticated = false;
-	console.log("set timeout... " + Date.now());
-	ws.timeout = setTimeout(keepAlive, 10000, ws);
+	// console.log("set timeout... " + Date.now());
+	// ws.timeout = setTimeout(keepAlive, 10000, ws);
 	console.log('Connection established: total clients: %d', wss.clients.size);
 
 	ws.on('close', function(event) {
-		console.log("clear timeout... " + Date.now());
-		clearTimeout(ws.timeout);
-		console.log('Connection closed: total clients: %d', wss.clients.size);
+		// console.log("clear timeout... " + Date.now());
+		// clearTimeout(ws.timeout);
+		// console.log('Connection closed: total clients: %d', wss.clients.size);
 		mongo.connect(url, function(err, db) {
 			if (!err) {
 				db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
@@ -50,10 +50,10 @@ wss.on('connection', function connection(ws, req) {
 	});
 	
 	ws.on('message', function(event) {
-		console.log("clear timeout... " + Date.now());
-		clearTimeout(ws.timeout);
-		console.log("set timeout... " + Date.now());
-		ws.timeout = setTimeout(keepAlive, 10000, ws);
+		// console.log("clear timeout... " + Date.now());
+		// clearTimeout(ws.timeout);
+		// console.log("set timeout... " + Date.now());
+		// ws.timeout = setTimeout(keepAlive, 10000, ws);
 		type = JSON.parse(event).type;
 		switch(type) {
 			case "guest":
@@ -309,7 +309,7 @@ wss.on('connection', function connection(ws, req) {
 		};
 		
 	});
-
+/*
 	function keepAlive(ws) {
 		console.log("time is up: start heartbeat algorithm... " + Date.now());
 		ws.ping();
@@ -321,7 +321,7 @@ wss.on('connection', function connection(ws, req) {
 		ws.timeout = setTimeout(heartbeat, 5000, ws);
 		console.log("heartbeat... " + Date.now());
 	}
-
+*/
 });
 
 server.listen(port, function listening() {
