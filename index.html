@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-13T02:44:20+0800" >
+<meta name="date" content="2017-09-14T02:37:52+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -210,7 +210,148 @@ wR////////////8=" />
 	    margin: 10px 0px;
 	    text-align: center;
 	}
+	
+	#HeaderUserArea {
+		float: left;
+		margin-left: 5px;
+		padding-right: 10px;
+	}
 
+	#HeaderAvatar {
+		float: left;
+		width: 32px;
+		height: 32px;
+		display: block;
+		margin-top: 4px;
+	}
+	
+	#HeaderUsername {
+		float: left;
+		margin-left: 10px;
+		margin-top: 11px;
+		font-size: 17px;
+	}
+	
+	#HeaderNotificationArea {
+		float: left;
+		margin-left: 5px;
+		padding-right: 10px;
+	}
+	
+	#HeaderNotificationText {
+		float: left;
+		margin-left: 10px;
+		margin-top: 11px;
+		font-size: 17px;
+	}
+	
+	#HeaderNotificationIcon {
+		float: left;
+		display: block;
+		margin-left: 8px;
+		margin-top: 16px;
+		width: 8px;
+		height: 8px;
+	}
+	
+	#HeaderLogo {
+		float: right;
+	}
+	
+	#HeaderLogo h1 {
+		margin: 2px 20px 2px 20px;
+	}
+	
+	#UsersListHeader {
+		width: 100%;
+		color: #FFA366;
+		font-style: italic;
+		font-size: 11px;
+		font-weight: bold;
+		text-align: center;
+		margin-top: 5px;
+		overflow: hidden;
+	}
+	
+	.UsersListUserWrapper {
+		width: 100%;
+		height: 32px;
+		clear: both;
+	}
+	.UsersListUsername {
+		float: left;
+		margin-top: 7px;
+		margin-left: 8px;
+		font-size: 13px;
+		font-weight: bold;
+		color: #3B5897;
+	}
+	
+	.UserListOnlineIcon {
+		width: 8px;
+		height: 8px;
+		float: right;
+		margin-top: 11px;
+		margin-right: 8px;
+	}
+	
+	.MessageWrapper {
+		margin: 0px;
+		margin-left: 5px;
+		padding: 3px 0;
+	}
+
+	.MessageAvatar {
+		float: left;
+		width: 34px;
+		height: 34px;
+		margin: 2px 5px 0px 5px;
+	}
+	
+	.MessageTopWrapper {
+		margin-left: 44px;
+		height: 14px;
+		width: auto;
+	}
+	
+	.MessageUsername {
+		float: left;
+		color: #3B5897;
+		font-size: 11px;
+		font-weight: bold;
+	}
+	
+	.MessageTime {
+		float: left;
+		color: #898989;
+		font-size: 9px;
+		margin-top: 1px;
+		margin-left: 3px;
+	}
+	
+	.MessageBody {
+		margin-left: 5px;
+		margin-top: 4px;
+		font-size: 15px;
+	}
+	
+	#InputTextArea {
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		resize: none;
+	}
+		
+	#SendButton {
+		width: auto;
+		height: 100%;
+		padding: 0 10px;
+		border: thin solid #4B79A1;
+		background-color: #4B79A1;
+		color: white;
+		cursor: pointer;
+	}
+	
 	@media only screen and (max-width: 568px) {
 		#Chat {
 			display: grid;
@@ -225,30 +366,6 @@ wR////////////8=" />
 		  grid-column: 1 / 2;
 		  grid-row: 1 / 2;
 		}
-		
-		#HeaderUserArea {
-			float: left;
-			margin-left: 5px;
-		}
-
-		#HeaderAvatar {
-			float: left;
-			width: 32px;
-			height: 32px;
-			display: block;
-			margin-top: 4px;
-		}
-		
-		#HeaderUsername {
-			float: left;
-			margin-left: 10px;
-			margin-top: 11px;
-			font-size: 17px;
-		}
-		
-		#HeaderLogo {
-			float: right;
-		}
 				
 		#UsersList {
 			display: none;
@@ -260,61 +377,17 @@ wR////////////8=" />
 			overflow-y: scroll;
 		}
 		
-		.MessageWrapper {
-			margin: 0px;
-			margin-left: 5px;
-			padding: 3px 0;
-		}
-		
-		.MessageUsername {
-			float: left;
-			color: #3B5897;
-			font-size: 11px;
-			font-weight: bold;
-		}
-		
-		.MessageTime {
-			float: left;
-			color: #898989;
-			font-size: 9px;
-			margin-top: 1px;
-			margin-left: 3px;
-		}
-		
-		.MessageBody {
-			margin-top: 4px;
-			font-size: 15px;
-			clear: both;
-		}
-		
 		#InputTextWrapper {
 			grid-column: 1 / 2;
 			grid-row: 3 / 4;
 		}
-		
-		#InputTextArea {
-			box-sizing: border-box;
-			width: 100%;
-			height: 100%;
-			resize: none;
-		}
-		
+				
 		#ButtonWrapper {
 		  grid-column: 1 / 2;
 		  grid-row: 4 / 5;
 		  text-align: right;
 		}
-		
-		#SendButton {
-			width: auto;
-			height: 100%;
-			padding: 0 10px;
-			border: thin solid #4B79A1;
-			background-color: #4B79A1;
-			color: white;
-			cursor: pointer;
-		}
-		
+
 		footer {
 			grid-column: 1 / 2;
 			grid-row: 5 / 6;
@@ -340,66 +413,11 @@ wR////////////8=" />
 		  grid-row: 1 / 2;
 		}
 		
-		#HeaderUserArea {
-			float: left;
-		}
-
-		#HeaderAvatar {
-			float: left;
-			width: 32px;
-			height: 32px;
-			display: block;
-			margin-top: 4px;
-		}
-		
-		#HeaderUsername {
-			float: left;
-			margin-left: 10px;
-			margin-top: 11px;
-			font-size: 17px;
-		}
-		
-		#HeaderLogo {
-			float: right;
-		}
-		
 		#UsersList {
 		  grid-column: 2 / 3;
 		  grid-row: 2 / 5;
 		  background-color: white;
 		  border: thin solid #696969;
-		}
-		
-		#UsersListHeader {
-			width: 100%;
-			color: #FFA366;
-			font-style: italic;
-			font-size: 11px;
-			font-weight: bold;
-			text-align: center;
-			margin-top: 5px;
-			overflow: hidden;
-		}
-		
-		.UsersListUserWrapper {
-			width: 100%;
-			height: 32px;
-			clear: both;
-		}
-		.UsersListUsername {
-			float: left;
-			margin-top: 7px;
-			margin-left: 8px;
-			font-size: 13px;
-			font-weight: bold;
-			color: #3B5897;
-		}
-		.UserListOnlineIcon {
-			width: 8px;
-			height: 8px;
-			float: right;
-			margin-top: 11px;
-			margin-right: 8px;
 		}
 		
 		#MessagesWrapper {
@@ -410,60 +428,23 @@ wR////////////8=" />
 			border: thin solid #696969;
 		}
 		
-		.MessageWrapper {
-			margin: 0px;
-			margin-left: 5px;
-			padding: 3px 0;
-		}
-		.MessageUsername {
-			float: left;
-			color: #3B5897;
-			font-size: 11px;
-			font-weight: bold;
-		}
-		.MessageTime {
-			float: left;
-			color: #898989;
-			font-size: 9px;
-			margin-top: 1px;
-			margin-left: 3px;
-		}
-		.MessageBody {
-			margin-top: 4px;
-			font-size: 15px;
-			clear: both;
-		}
 		#InputTextWrapper {
 			grid-column: 3 / 4;
 			grid-row: 3 / 4;
 			border: thin solid #696969;
 		}
-		#InputTextArea {
-			box-sizing:border-box;
-			height: 100%;
-			width: 100%;
-			resize: none;
-		}
+		
 		#ButtonWrapper {
 		  grid-column: 3 / 4;
 		  grid-row: 4 / 5;
 		  text-align: right;
 		}
-		#SendButton {
-			width: auto;
-			height: 100%;
-			padding: 0 10px;
-			border: thin solid #4B79A1;
-			background-color: #4B79A1;
-			color: white;
-			cursor: pointer;
-		}
 		
 		footer {
-		  grid-column: 1 / 5;
-		  grid-row: 5 / 6;
+			grid-column: 1 / 5;
+			grid-row: 5 / 6;
 			padding: 10px;
-		  background-color: #DDD;
+			background-color: #DDD;
 			font-size: 12px;
 			text-align: center;
 		}	
@@ -541,6 +522,10 @@ FKUEftzBVzfP58fIfT0vOe8bvp0Hr2yc37q6hFkvpGoq64dA5J1Pab17dQGW7ShFeh9HkeBC9bs3
 lllNdAdmqoj4PNj/4d4KFuankfImadG8r0PApGSQR0m+f+8TZbuiVq/XUV/IUDXSO0jqsk4zqcHq
 AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				<div id="HeaderUsername"></div>
+			</div>
+			<div id="HeaderNotificationArea">
+				<div id="HeaderNotificationText"></div>
+				<img id="HeaderNotificationIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH3QQQCg4n8fNJPQAAAEFJREFUGNNj/P//PwMDAwND0HM/CAMK1kluYmRgYGBgwiaJLMYY+MwXQxIZMDEQAFRQAHMtNrBOchMjE7KXsHkTAN/JFIN97NMaAAAAAElFTkSuQmCC" alt="User Online">
 			</div>
 			<div id="HeaderLogo"><h1>Chat</h1></div>
 		</header>
@@ -1091,7 +1076,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('ws://172.17.0.5');
+			var socket = new WebSocket('wss://owncloudhk.net');
 
 			var usersList = [];
 
@@ -1100,6 +1085,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				usersList.forEach(function (user) {
 					html += '<div class="UsersListUserWrapper"><div class="UsersListUsername">' + user.username + '</div><img class="UserListOnlineIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH3QQQCg4n8fNJPQAAAEFJREFUGNNj/P//PwMDAwND0HM/CAMK1kluYmRgYGBgwiaJLMYY+MwXQxIZMDEQAFRQAHMtNrBOchMjE7KXsHkTAN/JFIN97NMaAAAAAElFTkSuQmCC" alt="User Online"></div>';
 				});
+				document.getElementById("HeaderNotificationText").innerHTML = usersList.length + " user(s)";
 				document.getElementById("UsersList").innerHTML = html;
 			}
 			
@@ -1113,7 +1099,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 						updateUsersList();
 						data.messages.forEach(function (data) {
 							var date = new Date(data.timestamp);
-							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
+							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><img class="MessageAvatar" src="data:image/png;base64,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" alt="User Online"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
 						});
 						document.getElementById("HeaderUsername").innerHTML = document.getElementById("Username").value;
 						document.getElementById("Chat").style.display="grid";
