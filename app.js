@@ -21,9 +21,19 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws, req) {
 	ws.authenticated = false;
+	console.log("set timeout... " + Date.now());
+	ws.heartbeat = false;
+	ws.timeout = setTimeout(keepAlive, 10000, ws);
 	console.log('Connection established: total clients: %d', wss.clients.size);
 
 	ws.on('close', function(event) {
+		console.log("clear timeout...");
+		if (ws.heartbeat) {
+			clearInterval(ws.timeout);
+			ws.heartbeat = false;
+		} else {
+			clearTimeout(ws.timeout);
+		};
 		console.log('Connection closed: total clients: %d', wss.clients.size);
 		mongo.connect(url, function(err, db) {
 			if (!err) {
@@ -47,6 +57,15 @@ wss.on('connection', function connection(ws, req) {
 	});
 	
 	ws.on('message', function(event) {
+		console.log("clear timeout... " + Date.now());
+		if (ws.heartbeat) {
+			clearInterval(ws.timeout);
+			ws.heartbeat = false;
+		} else {
+			clearTimeout(ws.timeout);
+		};
+		console.log("set timeout... " + Date.now());
+		ws.timeout = setTimeout(keepAlive, 10000, ws);
 		type = JSON.parse(event).type;
 		switch(type) {
 			case "guest":
@@ -305,14 +324,30 @@ wss.on('connection', function connection(ws, req) {
 		
 	});
 	
-/*	ws.on('pong', function () {
-		console.log('pong ' + ws.uuid);
+	ws.on('pong', function () {
+		ws.alive = true;
+		console.log('pong ' + ws.uuid + ' ' + Date.now());
 	});
 	
-	setInterval(function () {
-		console.log('ping ' + ws.uuid);
+	function keepAlive(ws) {
+		console.log("time is up: start heartbeat algorithm... " + Date.now());
+		ws.heartbeat = true;
+		ws.alive = false;
 		ws.ping();
-	}, 30000);*/
+		ws.timeout = setInterval(heartbeat, 5000, ws);
+	}
+	
+	function heartbeat(ws) {
+		if (ws.alive) {
+			ws.alive = false;
+			ws.ping();
+			console.log("heartbeat... " + Date.now());
+		} else {
+			ws.close();
+			console.log("no response ... close " + Date.now());
+		}
+		
+	}
 
 });
 
