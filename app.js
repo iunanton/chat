@@ -107,7 +107,7 @@ wss.on('connection', function connection(ws, req) {
 											}
 										}
 									} else {
-										var user = { "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username };
+										var user = { "userUuid": ws.uuid, "isGuest": true, "isDeleted": false, "isOnline": true, "username": data.username };
 										db.collection("users").insertOne( user, function(err, r) {
 											if (!err) {
 												ws.authenticated = true;
@@ -222,7 +222,7 @@ wss.on('connection', function connection(ws, req) {
 							db.collection("users").findOne({ "username": data.username }, { "isGuest": 1, "isOnline": 1 }, function (err, r) {
 								if (!err) {
 									if (!r) {
-										var user = { "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username, "password": data.password };
+										var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username, "password": data.password };
 										db.collection("users").insertOne( user, function(err, r) {
 											if (!err) {
 												ws.authenticated = true;
