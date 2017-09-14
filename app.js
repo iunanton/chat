@@ -56,6 +56,10 @@ wss.on('connection', function connection(ws, req) {
 		// ws.timeout = setTimeout(keepAlive, 10000, ws);
 		type = JSON.parse(event).type;
 		switch(type) {
+			case "ping":
+				var message = JSON.stringify({ "type": "pong", "data": {} });
+				ws.send(message);
+				break;
 			case "guest":
 				var data = JSON.parse(event).data;
 				mongo.connect(url, function(err, db) {
