@@ -28,25 +28,27 @@ wss.on('connection', function connection(ws, req) {
 		// console.log("clear timeout... " + Date.now());
 		// clearTimeout(ws.timeout);
 		console.log("%s Connection closed: uuid: %s, total clients: %d", Date.now(), ws.uuid, wss.clients.size);
-		mongo.connect(url, function(err, db) {
-			if (!err) {
-				db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
-					if (!err) {
-						var broadcast = JSON.stringify({ "type": "userLeft", "data": { "userUuid": ws.uuid } });
-						wss.clients.forEach(function each(client) {
-							if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
-								client.send(broadcast);
-						});
-					} else {
-						var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-						ws.send(message);
-					}
-				});
-			} else {
-				var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-				ws.send(message);
-			}
-		});
+		if (ws.uuid) {
+			mongo.connect(url, function(err, db) {
+				if (!err) {
+					db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
+						if (!err) {
+							var broadcast = JSON.stringify({ "type": "userLeft", "data": { "userUuid": ws.uuid } });
+							wss.clients.forEach(function each(client) {
+								if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
+									client.send(broadcast);
+							});
+						} else {
+							var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+							ws.send(message);
+						}
+					});
+				} else {
+					var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+					ws.send(message);
+				}
+			});
+		}
 	});
 	
 	ws.on('message', function(event) {
@@ -57,8 +59,10 @@ wss.on('connection', function connection(ws, req) {
 		type = JSON.parse(event).type;
 		switch(type) {
 			case "ping":
+				console.log("%s Received PING", Date.now());
 				var message = JSON.stringify({ "type": "pong", "data": {} });
 				ws.send(message);
+				console.log("%s Transmitted PONG", Date.now());
 				break;
 			case "guest":
 				var data = JSON.parse(event).data;
