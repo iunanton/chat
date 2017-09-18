@@ -283,37 +283,39 @@ wss.on('connection', function connection(ws, req) {
 				break;
 
 			case "message":
-				var data = JSON.parse(event).data;
-				console.log("%s Message received: uuid: %s", Date.now(), ws.uuid);
-				mongo.connect(url, function(err, db) {
-					if (!err) {
-						db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
-							if (!err) {
-								var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": r.username };
-								var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
-								db.collection("messages").insertOne( message, function(err, r) {
-									if (!err) {
-										wss.clients.forEach(function each(client) {
-											if (client.readyState === WebSocket.OPEN && client.authenticated)
-												client.send(broadcast);
-										});
-									} else {
-										var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-										ws.send(message);
-									}
-								});
-
-							} else {
-								var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-								ws.send(message);
-							}
-						});
-					} else {
-						var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-						ws.send(message);
-					}
-				});
-				break;
+				if (ws.authenticated) {		
+					var data = JSON.parse(event).data;
+					console.log("%s Message received: uuid: %s", Date.now(), ws.uuid);
+					mongo.connect(url, function(err, db) {
+						if (!err) {
+							db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
+								if (!err) {
+									var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": r.username };
+									var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
+									db.collection("messages").insertOne( message, function(err, r) {
+										if (!err) {
+											wss.clients.forEach(function each(client) {
+												if (client.readyState === WebSocket.OPEN && client.authenticated)
+													client.send(broadcast);
+											});
+										} else {
+											var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+											ws.send(message);
+										}
+									});
+	
+								} else {
+									var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+									ws.send(message);
+								}
+							});
+						} else {
+							var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+							ws.send(message);
+						}
+					});
+				}
+			break;
 		};
 		
 	});
