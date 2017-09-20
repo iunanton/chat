@@ -28,7 +28,7 @@ wss.on('connection', function connection(ws, req) {
 		// console.log("clear timeout... " + Date.now());
 		// clearTimeout(ws.timeout);
 		console.log("%s Connection closed: uuid: %s, total clients: %d", Date.now(), ws.uuid, wss.clients.size);
-		if (ws.uuid) {
+		if (ws.authenticated) {
 			mongo.connect(url, function(err, db) {
 				if (!err) {
 					db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
@@ -164,49 +164,80 @@ wss.on('connection', function connection(ws, req) {
 				});
 				break;
 			case "login":
+				// console.log("%s Get login request...", Date.now());
 				var data = JSON.parse(event).data;
+				// console.log("%s Connect to DB...", Date.now());
 				mongo.connect(url, function(err, db) {
 					if (!err) {
+						// console.log("%s Send query to DB...", Date.now());
 						db.collection("users").findOne({ "isDeleted": false, "username": data.username }, { "password": 1, "isOnline": 1 }, function (err, r) {
-							if (!err) {								
+							if (!err) {
+								// console.log("%s Check password...", Date.now());
 								if (r && data.password === r.password) {
+									// console.log("%s isOnline?...", Date.now());
 									if (r.isOnline) {
+										// console.log("%s isOnline: true, close last connection...", Date.now());
 										wss.clients.forEach(function each(client) { 
-											if(r._id.equals(client.uuid)) client.close();
+											if(r._id.equals(client.uuid)) {
+												client.authenticated = false;
+												client.close();
+											}
 										});
-									};
-									ws.authenticated = true;
-									ws.uuid = r._id;
-									db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
-										if (!err) {
-											console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
-											db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
-												if (!err) {
-													db.collection("messages").find().toArray(function(err, messages) {
-														if (!err) {
-															var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
-															ws.send(message);
-														} else {
-															var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-															ws.send(message);
-														}
-													});
-												} else {
-													var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-													ws.send(message);
-												}
-											});
-											var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username };
-											var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
-											wss.clients.forEach(function each(client) {
-												if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
-													client.send(broadcast);
-											});
-										} else {
-											var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
-											ws.send(message);
-										}
-									});
+										ws.authenticated = true;
+										ws.uuid = r._id;
+										console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
+										db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+											if (!err) {
+												db.collection("messages").find().toArray(function(err, messages) {
+													if (!err) {
+														var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+														ws.send(message);
+													} else {
+														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+														ws.send(message);
+													}
+												});
+											} else {
+												var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+												ws.send(message);
+											}
+										});
+									} else {
+										// console.log("%s isOnline: false, set isOnline to true...", Date.now());
+										ws.authenticated = true;
+										ws.uuid = r._id;
+										db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": true } }, function (err, r) {
+											if (!err) {
+												console.log("%s Connection authenticated: uuid: %s", Date.now(), ws.uuid);
+												db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDelete": 1, "isOnline": 1, "username": 1 }).toArray(function(err, users) {
+													if (!err) {
+														db.collection("messages").find().toArray(function(err, messages) {
+															if (!err) {
+																var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+																ws.send(message);
+															} else {
+																var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+																ws.send(message);
+															}
+														});
+													} else {
+														var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+														ws.send(message);
+													}
+												});
+												// console.log("%s Broadcasting userJoined...", Date.now());
+												var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username };
+												var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
+												wss.clients.forEach(function each(client) {
+													if (client.readyState === WebSocket.OPEN && client.authenticated && client !== ws)
+														client.send(broadcast);
+												});
+											} else {
+												var message = JSON.stringify({ "type": "error", "data": { "reason": err.name } });
+												ws.send(message);
+											}
+										});
+									}
 								} else {
 									var message = JSON.stringify({ "type": "error", "data": { "reason": "Username or password incorrect." } });
 									ws.send(message);
