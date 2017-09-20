@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-18T07:52:28+0800" >
+<meta name="date" content="2017-09-21T03:31:21+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1075,7 +1075,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('wss://owncloudhk.net');
+			var socket = new WebSocket('ws://172.17.0.6');
 
 			var usersList = [];
 
@@ -1087,6 +1087,13 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				document.getElementById("HeaderNotificationText").innerHTML = usersList.length + " user(s)";
 				document.getElementById("UsersList").innerHTML = html;
 			}
+			
+			socket.onclose = function () {
+				usersList = [];
+				document.getElementById("MessagesWrapper").innerHTML = '';
+				document.getElementById("Chat").style.display="none";
+				document.getElementById("Authentication").style.display="grid";
+			};
 			
 			socket.onmessage = function (event) {
 				var message = JSON.parse(event.data);
@@ -1121,8 +1128,11 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 						var index = usersList.findIndex(function (user) {
 							return user.userUuid === data.userUuid;
 						});
-						usersList.splice(index, 1);
-						updateUsersList();
+						console.log(index);
+						if (index != -1) {
+							usersList.splice(index, 1);
+							updateUsersList();
+						}
 						console.log("User left chat.");
 						break;
 					case "messageAdd":
