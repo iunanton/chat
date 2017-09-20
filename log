@@ -1,0 +1,39 @@
+Server URL: wss://owncloudhk.net
+Idle time, min value: 258586
+Idle time, max value: 258871
+Start test
+1505497422346 socket was opened
+1505497422358 time: 258586 dtime: 2.85
+1505497422367 start test with timeout 258586
+1505498420988 time is up
+1505498421005 send message {"type":"ping","data":{}}
+1505498421028 got message {"type":"pong","data":{}}
+1505498421993 time: 258590.275 dtime: 4.275
+1505498422011 start test with timeout 258590.275
+1505500177876 time is up
+1505500177917 send message {"type":"ping","data":{}}
+1505500177953 got message {"type":"pong","data":{}}
+1505500178823 time: 258596.6875 dtime: 6.4125000000000005
+1505500178844 start test with timeout 258596.6875
+1505500470392 time is up
+1505500470424 send message {"type":"ping","data":{}}
+1505500470463 got message {"type":"pong","data":{}}
+1505500470534 time: 258606.30625 dtime: 9.61875
+1505500470544 start test with timeout 258606.30625
+1505500948547 time is up
+1505500948567 send message {"type":"ping","data":{}}
+1505500948607 got message {"type":"pong","data":{}}
+1505500951920 time: 258620.734375 dtime: 14.428125000000001
+1505500951948 start test with timeout 258620.734375
+1505516109963 time is up
+1505516110009 send message {"type":"ping","data":{}}
+1505516110126 ---lost connection---
+1505516110289 socket was opened
+1505516110296 time: 258613.5203125 dtime: 7.214062500000001
+1505516110303 start test
+1505516386632 time is upwith timeout 258613.5203125
+1505516386659 send message {"type":"ping","data":{}}
+1505516386703 got message {"type":"pong","data":{}}
+1505516386781 time: 258624.34140625002 dtime: 10.821093750000001
+1505516386794 start test with timeout 258624.34140625002
+Copyright © 2016-2017 Edge Consulting
