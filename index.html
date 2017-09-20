@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-21T03:31:21+0800" >
+<meta name="date" content="2017-09-21T03:50:32+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1075,7 +1075,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('ws://172.17.0.6');
+			var socket = new WebSocket('wss://owncloudhk.net');
 
 			var usersList = [];
 
@@ -1128,7 +1128,6 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 						var index = usersList.findIndex(function (user) {
 							return user.userUuid === data.userUuid;
 						});
-						console.log(index);
 						if (index != -1) {
 							usersList.splice(index, 1);
 							updateUsersList();
