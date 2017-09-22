@@ -273,7 +273,7 @@ wss.on('connection', function connection(ws, req) {
 								if (!err) {
 									if (!r) {
 										// console.log("%s Try to compute hash...", Date.now());
-										bcrypt.hash(data.password, 10, function(err, hash) {
+										bcrypt.hash(data.password, 12, function(err, hash) {
 											// console.log("%s hash: %s", Date.now(), hash);
 											var user = { "userUuid": ws.uuid, "isGuest": false, "isDeleted": false, "isOnline": true, "username": data.username, "password": hash };
 											db.collection("users").insertOne( user, function(err, r) {
