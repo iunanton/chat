@@ -2,13 +2,18 @@
  "name": "Chat",
  "version": "1.0.0",
  "description": "Text Chat on WebSocket",
- "author": "IUN ANTON <iunanton@naver.com>",
+ "author": "Iun Anton <iunanton@naver.com>",
  "main": "app.js",
  "scripts": {
     "start": "node app.js"
   },
+ "repository": {
+  "type": "git",
+  "url": "git://github.com/iunanton/chat.git"
+  },
  "dependencies": {
   "express": "*",
+  "bcrypt": "*",
   "mongodb": "*",
   "ws": "*"
  }
