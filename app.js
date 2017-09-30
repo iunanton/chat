@@ -1,5 +1,6 @@
 const express = require('express');
 const http = require('http');
+//const url = require('url');
 const WebSocket = require('ws');
 const app = express();
 const bcrypt = require('bcrypt');
@@ -20,6 +21,8 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws, req) {
+	// const location = url.parse(req.url, true);
+	console.log("%s REQ: %s", Date.now(), JSON.stringify(req.headers));
 	ws.authenticated = false;
 	// console.log("set timeout... " + Date.now());
 	// ws.timeout = setTimeout(keepAlive, 10000, ws);
@@ -381,5 +384,5 @@ wss.on('connection', function connection(ws, req) {
 });
 
 server.listen(port, function listening() {
-  console.log('Listening on %d', server.address().port);
+  console.log('%s Listening on %d', Date.now(), server.address().port);
 });
