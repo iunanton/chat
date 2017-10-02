@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-09-21T03:50:32+0800" >
+<meta name="date" content="2017-10-03T03:41:51+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1075,8 +1075,148 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-			var socket = new WebSocket('wss://owncloudhk.net');
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 400) {
+					var json = JSON.parse(this.responseText);
+					console.log(json);
+					if (json.error) {
+						document.getElementById("FormSubmitHintArea").innerHTML = json.error_description;
+					}
+					return;
+				}
+				if (this.readyState == 4 && this.status == 200) {
+					var json = JSON.parse(this.responseText);
+					if (json.access_token) {
+						var token = json.access_token;
+						var socket = new WebSocket("wss://owncloudhk.net/chat2/?access_token=" + token);
+						socket.onopen = function () {
+							document.getElementById("Authentication").style.display="none";
+							document.getElementById("Chat").style.display="grid";
+							document.getElementById("HeaderUsername").innerHTML = document.getElementById("Username").value.trim();
+							document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
+							document.getElementById("InputTextArea").focus();
+						}
+						socket.onclose = function () {
+							usersList = [];
+							document.getElementById("MessagesWrapper").innerHTML = '';
+							document.getElementById("Chat").style.display="none";
+							document.getElementById("Authentication").style.display="grid";
+						};
+						socket.onmessage = function (event) {
+							var message = JSON.parse(event.data);
+							if (message.error) {
+								document.getElementById("FormSubmitHintArea").innerHTML = message.error_description;
+							}
+						};
+					}
+				}
+			};
 
+			document.getElementById("SwitchToGuestLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="block";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="none";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="none";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="block";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToLoginLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="block";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="none";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="none";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="block";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToRegistrationLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="block";
+				document.getElementById("SwitchToRegistrationLabel").style.display="none";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="block";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="block";
+			});
+			
+			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value.trim();
+				var accessCode = document.getElementById("AccessCode").value.trim();
+				if (username && accessCode) {
+					if (username.length > 1 && username.length < 41) {
+						// var message = JSON.stringify({ "type": "guest", "data": { "username": username, "accessCode": accessCode } });
+						// socket.send(message);					
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
+				}
+			});
+			
+			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
+				var grant_type = "password";
+				var username = document.getElementById("Username").value.trim();
+				var password = document.getElementById("Password").value.trim();
+				if (username && password) {
+					if (username.length > 1 && username.length < 41) {
+						// var message = JSON.stringify({ "type": "login", "data": { "username": username, "password": password } });
+						// socket.send(message);
+						xhttp.open("POST", "//owncloudhk.net/oauth", true);
+						xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+						xhttp.send("grant_type=" + encodeURIComponent(grant_type) + "&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password));
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
+				}
+			});
+			
+			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value.trim();
+				var accessCode = document.getElementById("AccessCode").value.trim();
+				var password = document.getElementById("Password").value.trim();
+				var password2 = document.getElementById("Password2").value.trim();
+				if (password === password2) {
+					// var message = JSON.stringify({ "type": "registration", "data": { "username": username, "accessCode": accessCode, "password": password } });
+					// socket.send(message);
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Entered passwords must be the same.";			
+				}
+			});
+			
+			document.getElementById("AuthenticationForm").addEventListener("keyup", function (event) {
+				if (event.keyCode == '13') {
+					if (document.getElementById("GuestFormSubmit").style.display == "block")
+						document.getElementById("GuestFormSubmit").click();
+					if (document.getElementById("LoginFormSubmit").style.display == "block")
+						document.getElementById("LoginFormSubmit").click();
+					if (document.getElementById("RegistrationFormSubmit").style.display == "block")
+						document.getElementById("RegistrationFormSubmit").click();
+				}
+			});
+			
+/*
 			var usersList = [];
 
 			function updateUsersList() {
@@ -1144,105 +1284,6 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				};
 			};
 			
-			document.getElementById("SwitchToGuestLabel").addEventListener("click", function () {
-				document.getElementById("GuestAuthenticationFormTitle").style.display="block";
-				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
-				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
-				document.getElementById("SwitchToRegistrationLabel").style.display="block";
-				document.getElementById("SwitchToLoginLabel").style.display="block";
-				document.getElementById("SwitchToGuestLabel").style.display="none";
-				document.getElementById("FormWrapAccessCode").style.display="block";
-				document.getElementById("FormWrapPassword").style.display="none";
-				document.getElementById("FormWrapPassword2").style.display="none";
-				document.getElementById("GuestFormSubmit").style.display="block";
-				document.getElementById("LoginFormSubmit").style.display="none";
-				document.getElementById("RegistrationFormSubmit").style.display="none";
-			});
-			
-			document.getElementById("SwitchToLoginLabel").addEventListener("click", function () {
-				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
-				document.getElementById("LoginAuthenticationFormTitle").style.display="block";
-				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
-				document.getElementById("SwitchToRegistrationLabel").style.display="block";
-				document.getElementById("SwitchToLoginLabel").style.display="none";
-				document.getElementById("SwitchToGuestLabel").style.display="block";
-				document.getElementById("FormWrapAccessCode").style.display="none";
-				document.getElementById("FormWrapPassword").style.display="block";
-				document.getElementById("FormWrapPassword2").style.display="none";
-				document.getElementById("GuestFormSubmit").style.display="none";
-				document.getElementById("LoginFormSubmit").style.display="block";
-				document.getElementById("RegistrationFormSubmit").style.display="none";
-			});
-			
-			document.getElementById("SwitchToRegistrationLabel").addEventListener("click", function () {
-				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
-				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
-				document.getElementById("RegistrationAuthenticationFormTitle").style.display="block";
-				document.getElementById("SwitchToRegistrationLabel").style.display="none";
-				document.getElementById("SwitchToLoginLabel").style.display="block";
-				document.getElementById("SwitchToGuestLabel").style.display="block";
-				document.getElementById("FormWrapAccessCode").style.display="block";
-				document.getElementById("FormWrapPassword").style.display="block";
-				document.getElementById("FormWrapPassword2").style.display="block";
-				document.getElementById("GuestFormSubmit").style.display="none";
-				document.getElementById("LoginFormSubmit").style.display="none";
-				document.getElementById("RegistrationFormSubmit").style.display="block";
-			});
-			
-			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
-				var username = document.getElementById("Username").value.trim();
-				var accessCode = document.getElementById("AccessCode").value.trim();
-				if (username && accessCode) {
-					if (username.length > 1 && username.length < 41) {
-						var message = JSON.stringify({ "type": "guest", "data": { "username": username, "accessCode": accessCode } });
-						socket.send(message);					
-					} else {
-						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
-					}
-				} else {
-					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
-				}
-			});
-			
-			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
-				var username = document.getElementById("Username").value.trim();
-				var password = document.getElementById("Password").value.trim();
-				if (username && password) {
-					if (username.length > 1 && username.length < 41) {
-						var message = JSON.stringify({ "type": "login", "data": { "username": username, "password": password } });
-						socket.send(message);					
-					} else {
-						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
-					}
-				} else {
-					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
-				}
-			});
-			
-			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
-				var username = document.getElementById("Username").value.trim();
-				var accessCode = document.getElementById("AccessCode").value.trim();
-				var password = document.getElementById("Password").value.trim();
-				var password2 = document.getElementById("Password2").value.trim();
-				if (password === password2) {
-					var message = JSON.stringify({ "type": "registration", "data": { "username": username, "accessCode": accessCode, "password": password } });
-					socket.send(message);
-				} else {
-					document.getElementById("FormSubmitHintArea").innerHTML = "Entered passwords must be the same.";			
-				}
-			});
-			
-			document.getElementById("AuthenticationForm").addEventListener("keyup", function (event) {
-				if (event.keyCode == '13') {
-					if (document.getElementById("GuestFormSubmit").style.display == "block")
-						document.getElementById("GuestFormSubmit").click();
-					if (document.getElementById("LoginFormSubmit").style.display == "block")
-						document.getElementById("LoginFormSubmit").click();
-					if (document.getElementById("RegistrationFormSubmit").style.display == "block")
-						document.getElementById("RegistrationFormSubmit").click();
-				}
-			});
-			
 			document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
 				if (document.getElementById("InputTextArea").value.trim()) {
 					if (event.keyCode == '13') {
@@ -1277,6 +1318,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				var message = JSON.stringify({ "type": "message", "data": { "messageBody": messageBody } });
 				socket.send(message);
 			})
+			*/
 		})();
 	</script>
 </body>
