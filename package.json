@@ -1,6 +1,6 @@
 {
  "name": "Chat",
- "version": "1.0.0",
+ "version": "2.0.0",
  "description": "Text Chat on WebSocket",
  "author": "Iun Anton <iunanton@naver.com>",
  "main": "app.js",
