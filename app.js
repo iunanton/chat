@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-//const url = require('url');
+const URL = require('url');
 const WebSocket = require('ws');
 const app = express();
 const bcrypt = require('bcrypt');
@@ -21,13 +21,32 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws, req) {
-	// const location = url.parse(req.url, true);
-	console.log("%s REQ: %s", Date.now(), JSON.stringify(req.headers));
-	ws.authenticated = false;
 	// console.log("set timeout... " + Date.now());
 	// ws.timeout = setTimeout(keepAlive, 10000, ws);
 	console.log("%s Connection established: total clients: %d", Date.now(), wss.clients.size);
-
+	// get token from URL
+	const token = URL.parse(req.url, true).query.access_token;
+	// find in DB
+	mongo.connect(url, function(err, db) {
+		if (err) {
+			console.error("%s %s: %s", Date.now(), err.name, err.message);
+			return;
+		}
+		db.collection("users").findOne({ "userUuid": token }, { "isGuest": 1, "isOnline": 1 }, function (err, r) {
+			if (err) {
+				console.error("%s %s: %s", Date.now(), err.name, err.message);
+				return;
+			}
+			if (!r) {
+				console.error("%s %s", Date.now(), "invalid_token");
+				var message = JSON.stringify({ "error": "invalid_token", "error_description": "Invalid access token: " + token });
+				ws.send(message);
+				ws.close();
+				return;
+			}
+		});
+	});
+	
 	ws.on('close', function(event) {
 		// console.log("clear timeout... " + Date.now());
 		// clearTimeout(ws.timeout);
