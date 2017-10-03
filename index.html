@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-10-04T02:32:21+0800" >
+<meta name="date" content="2017-10-04T02:38:22+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1103,7 +1103,6 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 							document.getElementById("Authentication").style.display="grid";
 						};
 						socket.onmessage = function (event) {
-							console.log(event);
 							var message = JSON.parse(event.data);
 							var type = message.type;
 							switch(type) {
@@ -1126,7 +1125,6 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 									break;
 								case "userLeft":
 									var data = message.data;
-									console.log(data);
 									var index = usersList.findIndex(function (user) {
 										return user._id === data._id;
 									});
