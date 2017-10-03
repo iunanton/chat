@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-10-04T00:52:00+0800" >
+<meta name="date" content="2017-10-03T04:51:40+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -455,17 +455,32 @@ wR////////////8=" />
 	<div id="Authentication" style="display: grid">
 		<div id="AuthenticationForm">
 			<div class="FormLabelWrap" style="margin: 2px 0px 20px 0px; height: 27px;">
-				<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Log in</div>
+				<div id="GuestAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Guest</div>
+				<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Log in</div>
+				<div id="RegistrationAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Sign up</div>
+				<div id="SwitchToRegistrationLabel" class="SwitchFormsLabel" style="display: block;">Sign up</div>
+				<div id="SwitchToLoginLabel" class="SwitchFormsLabel" style="display: block;">Log in</div>
+				<div id="SwitchToGuestLabel" class="SwitchFormsLabel" style="display: none;">Guest</div>
 			</div>
 			<div id="FormWrapUsername" class="FormLabelWrap" style="display: block;">
 				<label class="FormLabel" for="Username">Username:</label>
 				<input type="text" class="FormInput" id="Username" autofocus />
 			</div>
-			<div id="FormWrapPassword" class="FormLabelWrap" style="display: block;">
+			<div id="FormWrapAccessCode" class="FormLabelWrap" style="display: block;">
+				<label class="FormLabel" for="AccessCode">Access code:</label>
+				<input type="password" class="FormInput" id="AccessCode" />
+			</div>
+			<div id="FormWrapPassword" class="FormLabelWrap" style="display: none;">
 				<label class="FormLabel" for="Password">Password:</label>
 				<input type="password" class="FormInput" id="Password" />
 			</div>
-			<button id="LoginFormSubmit" class="FormSubmit" style="display: block;">Log in</button>
+			<div id="FormWrapPassword2" class="FormLabelWrap" style="display: none;">
+				<label class="FormLabel" for="Password2">Password: (enter again)</label>
+				<input type="password" class="FormInput" id="Password2" />
+			</div>
+			<button id="GuestFormSubmit" class="FormSubmit" style="display: block;">Chat as guest</button>
+			<button id="LoginFormSubmit" class="FormSubmit" style="display: none;">Log in</button>
+			<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
 			<div id="FormSubmitHintArea"></div>
 		</div>
 	</div>
@@ -1060,22 +1075,11 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 	//r//P8NAPz//f/+/0xJU1QUAAAASU5GT0lTRlQIAAAARmlzc2lvbgA="></audio>
 	<script type="text/javascript">
 		(function() {
-		
-			var usersList = [];
-			
-			function updateUsersList() {
-				var html = '<div id="UsersListHeader">People in Chatroom</div>';
-				usersList.forEach(function (user) {
-					html += '<div class="UsersListUserWrapper"><div class="UsersListUsername">' + user.username + '</div><img class="UserListOnlineIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH3QQQCg4n8fNJPQAAAEFJREFUGNNj/P//PwMDAwND0HM/CAMK1kluYmRgYGBgwiaJLMYY+MwXQxIZMDEQAFRQAHMtNrBOchMjE7KXsHkTAN/JFIN97NMaAAAAAElFTkSuQmCC" alt="User Online"></div>';
-				});
-				document.getElementById("HeaderNotificationText").innerHTML = usersList.length + " user(s)";
-				document.getElementById("UsersList").innerHTML = html;
-			}
-			
 			var xhttp = new XMLHttpRequest();
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 400) {
 					var json = JSON.parse(this.responseText);
+					console.log(json);
 					if (json.error) {
 						document.getElementById("FormSubmitHintArea").innerHTML = json.error_description;
 					}
@@ -1085,7 +1089,7 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 					var json = JSON.parse(this.responseText);
 					if (json.access_token) {
 						var token = json.access_token;
-						var socket = new WebSocket("wss://owncloudhk.net/app?access_token=" + token);
+						var socket = new WebSocket("wss://owncloudhk.net/chat2/?access_token=1" + token);
 						socket.onopen = function () {
 							document.getElementById("Authentication").style.display="none";
 							document.getElementById("Chat").style.display="grid";
@@ -1094,7 +1098,8 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 							document.getElementById("InputTextArea").focus();
 						}
 						socket.onerror = function (event) {
-							document.getElementById("FormSubmitHintArea").innerHTML = "Unknown error occurred";
+							console.log("error");
+							console.log(event);
 						}
 						socket.onclose = function () {
 							usersList = [];
@@ -1103,86 +1108,74 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 							document.getElementById("Authentication").style.display="grid";
 						};
 						socket.onmessage = function (event) {
-							console.log(event);
 							var message = JSON.parse(event.data);
-							var type = message.type;
-							switch(type) {
-								case "context":
-									var data = message.data;
-									usersList = data.users;
-									updateUsersList();
-									data.messages.forEach(function (data) {
-									var date = new Date(data.timestamp);
-									document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><img class="MessageAvatar" src="data:image/png;base64,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" alt="User Online"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
-									});
-									document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
-									console.log("Connection was established.");
-									break;
-								case "userJoined":
-									var data = message.data;
-									usersList.push(data);
-									updateUsersList();
-									console.log("New user joined.");
-									break;
-								case "userLeft":
-									var data = message.data;
-									var index = usersList.findIndex(function (user) {
-										return user.userUuid === data.userUuid;
-									});
-									if (index != -1) {
-										usersList.splice(index, 1);
-										updateUsersList();
-									}
-									console.log("User left chat.");
-									break;
-								case "messageAdd":
-									var data = message.data;
-									var date = new Date(data.timestamp);
-									document.getElementById("sound").play();
-									document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><img class="MessageAvatar" src="data:image/png;base64,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" alt="User Online"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
-									document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
-									break;
-								default:
-									break;
+							if (message.error) {
+								document.getElementById("FormSubmitHintArea").innerHTML = message.error_description;
 							}
 						};
-						document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
-							if (document.getElementById("InputTextArea").value.trim()) {
-								if (event.keyCode == '13') {
-									document.getElementById("SendButton").disabled = false;
-									document.getElementById("SendButton").click();
-								}
-							}
-						});
-						
-						document.getElementById("InputTextArea").addEventListener("keypress", function (event) {
-							if (event.keyCode == '13') {
-								event.preventDefault();
-								return false;
-							}
-						});
-						
-						document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
-							if (document.getElementById("InputTextArea").value.trim()) {
-								document.getElementById("SendButton").disabled = false;
-							} else {
-								document.getElementById("SendButton").disabled = true;
-								if (event.keyCode == '13') {
-									document.getElementById("InputTextArea").value="";
-								}
-							}
-						});
-			
-						document.getElementById("SendButton").addEventListener("click", function () {
-							var messageBody = document.getElementById("InputTextArea").value.trim();
-							document.getElementById("InputTextArea").value="";
-							document.getElementById("SendButton").disabled = true;
-							var message = JSON.stringify({ "type": "message", "data": { "messageBody": messageBody } });
-							socket.send(message);
-						});
 					}
 				}
 			};
+
+			document.getElementById("SwitchToGuestLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="block";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="none";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="none";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="block";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToLoginLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="block";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="none";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="none";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="block";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToRegistrationLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="block";
+				document.getElementById("SwitchToRegistrationLabel").style.display="none";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="block";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="block";
+			});
+			
+			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value.trim();
+				var accessCode = document.getElementById("AccessCode").value.trim();
+				if (username && accessCode) {
+					if (username.length > 1 && username.length < 41) {
+						// var message = JSON.stringify({ "type": "guest", "data": { "username": username, "accessCode": accessCode } });
+						// socket.send(message);					
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
+				}
+			});
 			
 			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
 				var grant_type = "password";
@@ -1190,6 +1183,8 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				var password = document.getElementById("Password").value.trim();
 				if (username && password) {
 					if (username.length > 1 && username.length < 41) {
+						// var message = JSON.stringify({ "type": "login", "data": { "username": username, "password": password } });
+						// socket.send(message);
 						xhttp.open("POST", "//owncloudhk.net/oauth", true);
 						xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 						xhttp.send("grant_type=" + encodeURIComponent(grant_type) + "&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password));
@@ -1201,13 +1196,133 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				}
 			});
 			
-			document.getElementById("AuthenticationForm").addEventListener("keyup", function (event) {
-				if (event.keyCode == '13') {
-					if (document.getElementById("LoginFormSubmit").style.display == "block")
-						document.getElementById("LoginFormSubmit").click();
+			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
+				var username = document.getElementById("Username").value.trim();
+				var accessCode = document.getElementById("AccessCode").value.trim();
+				var password = document.getElementById("Password").value.trim();
+				var password2 = document.getElementById("Password2").value.trim();
+				if (password === password2) {
+					// var message = JSON.stringify({ "type": "registration", "data": { "username": username, "accessCode": accessCode, "password": password } });
+					// socket.send(message);
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Entered passwords must be the same.";			
 				}
 			});
 			
+			document.getElementById("AuthenticationForm").addEventListener("keyup", function (event) {
+				if (event.keyCode == '13') {
+					if (document.getElementById("GuestFormSubmit").style.display == "block")
+						document.getElementById("GuestFormSubmit").click();
+					if (document.getElementById("LoginFormSubmit").style.display == "block")
+						document.getElementById("LoginFormSubmit").click();
+					if (document.getElementById("RegistrationFormSubmit").style.display == "block")
+						document.getElementById("RegistrationFormSubmit").click();
+				}
+			});
+			
+/*
+			var usersList = [];
+
+			function updateUsersList() {
+				var html = '<div id="UsersListHeader">People in Chatroom</div>';
+				usersList.forEach(function (user) {
+					html += '<div class="UsersListUserWrapper"><div class="UsersListUsername">' + user.username + '</div><img class="UserListOnlineIcon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH3QQQCg4n8fNJPQAAAEFJREFUGNNj/P//PwMDAwND0HM/CAMK1kluYmRgYGBgwiaJLMYY+MwXQxIZMDEQAFRQAHMtNrBOchMjE7KXsHkTAN/JFIN97NMaAAAAAElFTkSuQmCC" alt="User Online"></div>';
+				});
+				document.getElementById("HeaderNotificationText").innerHTML = usersList.length + " user(s)";
+				document.getElementById("UsersList").innerHTML = html;
+			}
+			
+			socket.onclose = function () {
+				usersList = [];
+				document.getElementById("MessagesWrapper").innerHTML = '';
+				document.getElementById("Chat").style.display="none";
+				document.getElementById("Authentication").style.display="grid";
+			};
+			
+			socket.onmessage = function (event) {
+				var message = JSON.parse(event.data);
+				switch(message.type) {
+					case "context":
+						var data = message.data;
+						document.getElementById("Authentication").style.display="none";
+						usersList = data.users;
+						updateUsersList();
+						data.messages.forEach(function (data) {
+							var date = new Date(data.timestamp);
+							document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><img class="MessageAvatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAZfSURBVGhD7VnZbhRHFD29z3iwMV4A2xDbhD1AQqSQKEoeyf/lQ/IB+QKkvPCCUBLiEMnExAZnxvYsvXfOrZ6eGRMznq42ixAltWdxT9c995576tYt48efNjJ8AMP8ADAoCB+BvG+R/BiRUhHJ3ryenGhExN5M/ZHX/kXEAkO+H16l3DDRzZWBFMYrABxJmiGMY0RRjNDvIgl9RHGqrjQzCMbIgfbBTWTlBDcZVdaRwngYhjI8TWMsTJto1CzUPRvLizOIkxTbu22+Jth62YNpmvCjDIZZg2URVH8YfEaVURkITUIU9HBluYZzC6cwVa/TSPF8pkCIeZZlqVd+zf8B3W6ARxs72O04cG1TRUdGFTDa1Cryt9tp4/alaXy6dg6u5yGOCYA0kldDmW8giRNSKyHlUgRhAstxcX19ES46/Byqe6oObSDC8l4Q47O1Bs4vziIMImW4eDz37ohp/DD0NqNFmtU8F/e/vYKbqzVGtDOIii4gLSBCG0nchhNi/cI8ElLosOXjzTGYJxLRnh9hptFAnObUqzK0gMiEcRxhcdalQWZOIM1krddtTDlxX6711xtNIAZcw8ety0sqoctEY9TrEhXbsnH5wgzzJ+G/3jYQel/WA6FXlSFRLBbJNImrPEqv+s0yqhJ5HQZBZcFJuYAunZ2FBQGiSRDdX9KPSJgZIqe5xFYbkl6mLDL6zNJ1AdeGRJSL+VFl9j5+WWMiSRFDH4lWLGU6x8p4WdVCIZRgJA46PkyLCljhaVpAhEwpWX3AUqMKtSTRhVatAz6HK2kVkmoByWUTaLbalZNdwDT3OqzDWOa/9YjQezUrwq3rF1nxVpmekWWaff35GhyTNVcFOdeKiKqzQpNVrF/Bh8Ofxkz2IJSFVf9x2kCi1MReOyAl9GeXBVF+3u4ESA2bOPSjqwnEgMeS/dn2ntocFauzjj9lo7VPhxgEog9DcylVCxj/7LQicjxRGyadIQ5wuLFqHoj8vgPVEqMNqozlNPDzg6fw1V6k3BAQNo1/8PApnjcTvh/ds5R7ltytSa18IrICht3AbovyWTIsQiPZx+/7Bhyvrh3VArI2kHz/YcC2bWztdlXSDpoREzjUIvDWQRdxJpsqKXXKxvTwJNpAcnqxscAn7HVStCnFkwqYABYgWzttioVTKckrR6R4gKzyplXDn89aivPHRaUoS3p+gO1mrADp7i5HY1IpIoOo2AYTNkZzXzx8PBiH9c3jjRfML6/fZ5mAi8fccgJA8rLRcWt4+FsTHalkx3BMROHxky28aJtKqSqmxgBeZSDqSWIPr5Tdw18ebY2hWEagXfy1E8N1nfynkybWm45IjmNYzE+f8lRH5CgNkn1+reapyvmkx4lEJK+ADS6MIeZnuEEyju6siPNdx8b8tJEXiVzGjhOHSQFXAlI06oIoQhwe4MYFB6sr86pd+roh7aMvri1jbYEVdO8AQZSvIVXqNcWKMt34XDpl0nyn7vd8NNwY11ZnscxOSELqSEk+jvtFBES5MtZpG89eYuPvNvNrCp6bV8BFm6hM/kwMJDcgL7R7BDBTi3FjfQ6Lc6fVmYi0TVVelEhetTCqTn2Kzef/4skmI5S6qNc9ekoiNbkYjAUyyl9pxgU+AdQTBWBhlmcf3N4VBz1lvFfQbhjhfKWXBvg/2y38urmPXuRQGNxDe5RxcxwJZHQCORwI2IgTCl1fPcMzkNMs9tgKIggd41+XO4XTBoB29vH7ZgtdAnJdV+3pi3HUvP8DMoyCKEsEzwpx7eKM6gYKKFGo4p6TBCJGFg6U9wJIPu/s7pNye+hEFhWPERJ5Enl/hcKHgIyeA6ZxD5fOT/HYYI4lOhuajEIJ+k+qmmPvE9qq4znmy/MXe/hDcihzCYhC8QqYgfzm8id7hBRTVoDv7pzD5dWzBG/mR2jVqmwtYDKniEiSGlTFM/j+yxUsnU7VuUoRweLBI0DyE9kpO8Q3d1YohTxJOkZKtawr+aOiQaGUkUJ2++oyLs6R9jx8zcHkD1RAFKUEftzBVzfP58fIfT0vOe8bvp0Hr2yc37q6hFkvpGoq64dA5J1Pab17dQGW7ShFeh9HkeBC9bs3lllNdAdmqoj4PNj/4d4KFuankfImadG8r0PApGSQR0m+f+8TZbuiVq/XUV/IUDXSO0jqsk4zqcHqAJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==" alt="User Online"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
+						});
+						document.getElementById("HeaderUsername").innerHTML = document.getElementById("Username").value.trim();
+						document.getElementById("Chat").style.display="grid";
+						document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
+						document.getElementById("InputTextArea").focus();
+						console.log("Connection was established.");
+						break;
+					case "error":
+						var data = message.data;
+						document.getElementById("FormSubmitHintArea").innerHTML = data.reason;
+						break;
+					case "userJoined":
+						var data = message.data;
+						usersList.push(data);
+						updateUsersList();
+						console.log("New user joined.");
+						break;
+					case "userLeft":
+						var data = message.data;
+						var index = usersList.findIndex(function (user) {
+							return user.userUuid === data.userUuid;
+						});
+						if (index != -1) {
+							usersList.splice(index, 1);
+							updateUsersList();
+						}
+						console.log("User left chat.");
+						break;
+					case "messageAdd":
+						var data = message.data;
+						var date = new Date(data.timestamp);
+						document.getElementById("sound").play();
+						document.getElementById("MessagesWrapper").innerHTML += '<div class="MessageWrapper"><img class="MessageAvatar" src="data:image/png;base64,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" alt="User Online"><div class="MessageTopWrapper"><div class="MessageUsername">' + data.username + '</div><div class="MessageTime">' + (date.getHours()<10?'0':'') + date.getHours() + ':' + (date.getMinutes()<10?'0':'') + date.getMinutes() + '</div></div><div class="MessageBody">' + data.messageBody + '</div></div>';
+						document.getElementById("MessagesWrapper").scrollTop = document.getElementById("MessagesWrapper").scrollHeight;
+						break;
+				};
+			};
+			
+			document.getElementById("InputTextArea").addEventListener("keydown", function (event) {
+				if (document.getElementById("InputTextArea").value.trim()) {
+					if (event.keyCode == '13') {
+						document.getElementById("SendButton").disabled = false;
+						document.getElementById("SendButton").click();
+					}
+				}
+			});
+			
+			document.getElementById("InputTextArea").addEventListener("keypress", function (event) {
+				if (event.keyCode == '13') {
+					event.preventDefault();
+					return false;
+				}
+			});
+			
+			document.getElementById("InputTextArea").addEventListener("keyup", function (event) {
+				if (document.getElementById("InputTextArea").value.trim()) {
+					document.getElementById("SendButton").disabled = false;
+				} else {
+					document.getElementById("SendButton").disabled = true;
+					if (event.keyCode == '13') {
+						document.getElementById("InputTextArea").value="";
+					}
+				}
+			});
+
+			document.getElementById("SendButton").addEventListener("click", function () {
+				var messageBody = document.getElementById("InputTextArea").value.trim();
+				document.getElementById("InputTextArea").value="";
+				document.getElementById("SendButton").disabled = true;
+				var message = JSON.stringify({ "type": "message", "data": { "messageBody": messageBody } });
+				socket.send(message);
+			})
+			*/
 		})();
 	</script>
 </body>
