@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-10-04T00:52:00+0800" >
+<meta name="date" content="2017-10-04T02:32:21+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -1126,9 +1126,11 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 									break;
 								case "userLeft":
 									var data = message.data;
+									console.log(data);
 									var index = usersList.findIndex(function (user) {
-										return user.userUuid === data.userUuid;
+										return user._id === data._id;
 									});
+									console.log(index);
 									if (index != -1) {
 										usersList.splice(index, 1);
 										updateUsersList();
