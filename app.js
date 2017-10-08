@@ -86,7 +86,7 @@ wss.on('connection', function connection(ws, req) {
 				var data = JSON.parse(event).data;
 				mongo.connect(url, function(err, db) {
 					db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
-						var message = { "_id": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": r.username };
+						var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": r.username };
 						var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
 						db.collection("messages").insertOne( message, function(err, r) {	
 							wss.clients.forEach(function each(client) {
