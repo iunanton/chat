@@ -41,6 +41,8 @@ var webSockOpts = {
 	}
 }
 
+const time = 100000; //we will send ping frame after 100 seconds of idle
+
 const wss = new WebSocket.Server(webSockOpts);
 
 wss.on('connection', function connection(ws, req) {
@@ -50,6 +52,8 @@ wss.on('connection', function connection(ws, req) {
 		db.collection("users").updateOne({ "tokens": { $elemMatch: { $eq: token } } }, { $set: { "isOnline": true } }, function (err, r) {
 			db.collection("users").findOne({ "tokens": { $elemMatch: { $eq: token } } }, { "isGuest": 1, "isDeleted": 1, "isOnline": 1, "username": 1 }, function (err, user) {
 				ws.uuid = user._id;
+				ws.timeout = setTimeout(ping, time);
+				ws.timeout.unref();
 				var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 				wss.clients.forEach(function each(client) {
 					if (client.readyState === WebSocket.OPEN && client !== ws) {
@@ -80,6 +84,9 @@ wss.on('connection', function connection(ws, req) {
 	});
 	
 	ws.on('message', function(event) {
+		clearTimeout(ws.timeout);
+		ws.timeout = setTimeout(ping, time);
+		ws.timeout.unref();
 		type = JSON.parse(event).type;
 		switch(type) {
 			case "message":	
@@ -100,7 +107,16 @@ wss.on('connection', function connection(ws, req) {
 			break;
 		};
 	});
+
+	ws.on('pong', function () {
+		console.log("%s receive pong frame", Date.now());
+	});
 });
+
+function ping(ws) {
+	console.log("%s send ping frame", Date.now());
+	ws.ping('', false, true);
+}
 
 server.listen(port, function listening() {
   console.log('%s Listening on %d', Date.now(), server.address().port);
