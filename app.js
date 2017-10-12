@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 var mongo = require('mongodb').MongoClient;
 var assert = require('assert');
 var url = 'mongodb://mongo:27017/chat';
+var N = 30;
 
 var port = process.env.PORT || 80;
 
@@ -61,9 +62,12 @@ wss.on('connection', function connection(ws, req) {
 					}
 				});
 				db.collection("users").find({ "isOnline": true }, { "isGuest": 1, "isDeleted": 1, "isOnline": 1, "username": 1 }).toArray(function (err, users) {
-					db.collection("messages").find().toArray(function(err, messages) {
-						var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
-						ws.send(message);
+					db.collection("messages").count(function(err, count){
+						console.log("%s %d", Date.now(), count-N);
+						db.collection("messages").find({}, {"skip": count-N }).toArray(function(err, messages) {
+							var message = JSON.stringify({ "type": "context", "data": { "users": users, "messages": messages } } );
+							ws.send(message);
+						});
 					});
 				});
 			});
@@ -116,7 +120,7 @@ wss.on('connection', function connection(ws, req) {
 	});
 
 	ws.on('pong', function (event) {
-		console.log("%s receive pong frame from %s", Date.now(), ws.uuid);
+		// console.log("%s receive pong frame from %s", Date.now(), ws.uuid);
 		clearTimeout(ws.timeout);
 		ws.timeout = setTimeout(ping, time, ws);
 		ws.timeout.unref();
@@ -124,7 +128,7 @@ wss.on('connection', function connection(ws, req) {
 });
 
 function ping(ws) {
-	console.log("%s send ping frame to %s", Date.now(), ws.uuid);
+	// console.log("%s send ping frame to %s", Date.now(), ws.uuid);
 	ws.ping('', false, true);
 }
 
