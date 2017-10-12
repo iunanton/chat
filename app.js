@@ -52,7 +52,7 @@ wss.on('connection', function connection(ws, req) {
 		db.collection("users").updateOne({ "tokens": { $elemMatch: { $eq: token } } }, { $set: { "isOnline": true } }, function (err, r) {
 			db.collection("users").findOne({ "tokens": { $elemMatch: { $eq: token } } }, { "isGuest": 1, "isDeleted": 1, "isOnline": 1, "username": 1 }, function (err, user) {
 				ws.uuid = user._id;
-				ws.timeout = setTimeout(ping, time);
+				ws.timeout = setTimeout(ping, time, ws);
 				ws.timeout.unref();
 				var broadcast = JSON.stringify({ "type": "userJoined", "data": user });
 				wss.clients.forEach(function each(client) {
@@ -71,6 +71,7 @@ wss.on('connection', function connection(ws, req) {
 	});
 	
 	ws.on('close', function(event) {
+		clearTimeout(ws.timeout);
 		console.log("%s Connection closed: uuid: %s, total clients: %d", Date.now(), ws.uuid, wss.clients.size);
 		mongo.connect(url, function(err, db) {
 			db.collection("users").updateOne({ "_id": ws.uuid }, { $set: { "isOnline": false } }, function (err, r) {
@@ -85,10 +86,16 @@ wss.on('connection', function connection(ws, req) {
 	
 	ws.on('message', function(event) {
 		clearTimeout(ws.timeout);
-		ws.timeout = setTimeout(ping, time);
+		ws.timeout = setTimeout(ping, time, ws);
 		ws.timeout.unref();
 		type = JSON.parse(event).type;
 		switch(type) {
+			case "ping":
+				console.log("%s receive ping frame from %s", Date.now(), ws.uuid);
+				var message = JSON.stringify({ "type": "pong", "data": {} });
+				ws.send(message);
+				console.log("%s send pong frame to %s", Date.now(), ws.uuid);
+				break;
 			case "message":	
 				var data = JSON.parse(event).data;
 				mongo.connect(url, function(err, db) {
@@ -108,13 +115,16 @@ wss.on('connection', function connection(ws, req) {
 		};
 	});
 
-	ws.on('pong', function () {
-		console.log("%s receive pong frame", Date.now());
+	ws.on('pong', function (event) {
+		console.log("%s receive pong frame from %s", Date.now(), ws.uuid);
+		clearTimeout(ws.timeout);
+		ws.timeout = setTimeout(ping, time, ws);
+		ws.timeout.unref();
 	});
 });
 
 function ping(ws) {
-	console.log("%s send ping frame", Date.now());
+	console.log("%s send ping frame to %s", Date.now(), ws.uuid);
 	ws.ping('', false, true);
 }
 
