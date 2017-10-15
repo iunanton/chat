@@ -43,6 +43,7 @@ var webSockOpts = {
 }
 
 const time = 100000; //we will send ping frame after 100 seconds of idle
+const heartBeatInterval = 25000;
 
 const wss = new WebSocket.Server(webSockOpts);
 
@@ -119,24 +120,24 @@ wss.on('connection', function connection(ws, req) {
 	});
 
 	ws.on('pong', function (event) {
-		console.log("%s receive pong frame from %s", Date.now(), ws.uuid);
 		ws.active = true;
 	});
 });
 
 function keepAlive(ws) {
 	console.log("%s Keep alive: %s", Date.now(), ws.uuid);
+	ws.active = true;
+	ping(ws);
 }
 
 function ping(ws) {
-	console.log("%s send ping frame to %s", Date.now(), ws.uuid);
-	console.log("%s send ping frame to %d", Date.now(), ws.active);
-	if (!ws.active) {
-		console.log("%s no response: closing", Date.now(), ws.uuid);
+	if (ws.active) {
+		ws.active = false;
+		ws.ping('', false, true);
+		ws.timeout = setTimeout(ping, heartBeatInterval, ws);
+	} else {
 		ws.close();
 	}
-	ws.active = false;
-	ws.ping('', false, true);
 }
 
 server.listen(port, function listening() {
