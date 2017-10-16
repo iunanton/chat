@@ -92,31 +92,34 @@ wss.on('connection', function connection(ws, req) {
 		clearTimeout(ws.timeout);
 		ws.timeout = setTimeout(keepAlive, time, ws);
 		ws.timeout.unref();
-		type = JSON.parse(event).type;
-		switch(type) {
-			case "ping":
-				console.log("%s receive ping frame from %s", Date.now(), ws.uuid);
-				var message = JSON.stringify({ "type": "pong", "data": {} });
-				ws.send(message);
-				console.log("%s send pong frame to %s", Date.now(), ws.uuid);
-				break;
-			case "message":	
-				var data = JSON.parse(event).data;
-				mongo.connect(url, function(err, db) {
-					db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
-						var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": r.username };
-						var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
-						db.collection("messages").insertOne( message, function(err, r) {	
-							wss.clients.forEach(function each(client) {
-								if (client.readyState === WebSocket.OPEN)
-									client.send(broadcast);
+		try {
+			type = JSON.parse(event).type;
+			switch(type) {
+				case "ping":
+					console.log("%s receive ping frame from %s", Date.now(), ws.uuid);
+					var message = JSON.stringify({ "type": "pong", "data": {} });
+					ws.send(message);
+					console.log("%s send pong frame to %s", Date.now(), ws.uuid);
+					break;
+				case "message":
+					var data = JSON.parse(event).data;
+					mongo.connect(url, function(err, db) {
+						db.collection("users").findOne({ "_id": ws.uuid }, { "username": 1 }, function (err, r) {
+							var message = { "userUuid": ws.uuid, "messageBody": data.messageBody, "timestamp": Date.now(), "username": r.username };
+							var broadcast = JSON.stringify({ "type": "messageAdd", "data": message });
+							db.collection("messages").insertOne( message, function(err, r) {
+								wss.clients.forEach(function each(client) {
+									if (client.readyState === WebSocket.OPEN)
+										client.send(broadcast);
+								});
 							});
 						});
 					});
-				});
-			
-			break;
-		};
+				break;
+			};
+		} catch (e) {
+			console.log("%s Exception in \"%s\": %s", Date.now(), event, e);
+		}
 	});
 
 	ws.on('pong', function (event) {
