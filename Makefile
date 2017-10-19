@@ -20,7 +20,7 @@ remote_build: package.json Dockerfile app.js index.html
 	ssh asus "docker run --detach \
 		--link mongo:mongo \
 		--name=$(NAME) \
-		--publish=32773:80 \
+		--publish=32768:80 \
 		--restart=always \
 		$(NAME) > /dev/null"
 	ssh asus "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(NAME)"
