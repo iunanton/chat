@@ -115,7 +115,11 @@ wss.on('connection', function connection(ws, req) {
 							});
 						});
 					});
-				break;
+					break;
+				default:
+					var data = JSON.parse(event).data;
+					console.log("%s %s: %s", Date.now(), type, data);
+					break;
 			};
 		} catch (e) {
 			console.log("%s Exception in \"%s\": %s", Date.now(), event, e);
