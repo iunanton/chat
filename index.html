@@ -4,7 +4,7 @@
 <title>Online Chat</title>
 <meta name="generator" content="Bluefish 2.2.7" >
 <meta name="author" content="Anton Yun" >
-<meta name="date" content="2017-10-08T22:57:09+0800" >
+<meta name="date" content="2017-10-19T20:33:52+0800" >
 <meta name="copyright" content="">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -455,17 +455,32 @@ wR////////////8=" />
 	<div id="Authentication" style="display: grid">
 		<div id="AuthenticationForm">
 			<div class="FormLabelWrap" style="margin: 2px 0px 20px 0px; height: 27px;">
-				<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Log in</div>
+				<div id="GuestAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: block;">Guest</div>
+				<div id="LoginAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Log in</div>
+				<div id="RegistrationAuthenticationFormTitle" class="AuthenticationFormTitle" style="display: none;">Sign up</div>
+				<div id="SwitchToRegistrationLabel" class="SwitchFormsLabel" style="display: block;">Sign up</div>
+				<div id="SwitchToLoginLabel" class="SwitchFormsLabel" style="display: block;">Log in</div>
+				<div id="SwitchToGuestLabel" class="SwitchFormsLabel" style="display: none;">Guest</div>
 			</div>
 			<div id="FormWrapUsername" class="FormLabelWrap" style="display: block;">
 				<label class="FormLabel" for="Username">Username:</label>
-				<input type="text" class="FormInput" id="Username" autofocus />
+				<input type="text" class="FormInput" id="Username" maxlength="40" autofocus />
 			</div>
-			<div id="FormWrapPassword" class="FormLabelWrap" style="display: block;">
+			<div id="FormWrapAccessCode" class="FormLabelWrap" style="display: block;">
+				<label class="FormLabel" for="AccessCode">Access code:</label>
+				<input type="password" class="FormInput" id="AccessCode" maxlength="40" />
+			</div>
+			<div id="FormWrapPassword" class="FormLabelWrap" style="display: none;">
 				<label class="FormLabel" for="Password">Password:</label>
-				<input type="password" class="FormInput" id="Password" />
+				<input type="password" class="FormInput" id="Password" maxlength="40" />
 			</div>
-			<button id="LoginFormSubmit" class="FormSubmit" style="display: block;">Log in</button>
+			<div id="FormWrapPassword2" class="FormLabelWrap" style="display: none;">
+				<label class="FormLabel" for="Password2">Password: (enter again)</label>
+				<input type="password" class="FormInput" id="Password2" maxlength="40" />
+			</div>
+			<button id="GuestFormSubmit" class="FormSubmit" style="display: block;">Chat as guest</button>
+			<button id="LoginFormSubmit" class="FormSubmit" style="display: none;">Log in</button>
+			<button id="RegistrationFormSubmit" class="FormSubmit" style="display: none;">Sign up</button>
 			<div id="FormSubmitHintArea"></div>
 		</div>
 	</div>
@@ -1183,20 +1198,105 @@ AJZDbBcM/wEfgQiGDbkW2QAAAABJRU5ErkJggg==">
 				}
 			};
 			
+			document.getElementById("SwitchToGuestLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="block";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="none";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="none";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="block";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToLoginLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="block";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="none";
+				document.getElementById("SwitchToRegistrationLabel").style.display="block";
+				document.getElementById("SwitchToLoginLabel").style.display="none";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="none";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="none";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="block";
+				document.getElementById("RegistrationFormSubmit").style.display="none";
+			});
+			
+			document.getElementById("SwitchToRegistrationLabel").addEventListener("click", function () {
+				document.getElementById("GuestAuthenticationFormTitle").style.display="none";
+				document.getElementById("LoginAuthenticationFormTitle").style.display="none";
+				document.getElementById("RegistrationAuthenticationFormTitle").style.display="block";
+				document.getElementById("SwitchToRegistrationLabel").style.display="none";
+				document.getElementById("SwitchToLoginLabel").style.display="block";
+				document.getElementById("SwitchToGuestLabel").style.display="block";
+				document.getElementById("FormWrapAccessCode").style.display="block";
+				document.getElementById("FormWrapPassword").style.display="block";
+				document.getElementById("FormWrapPassword2").style.display="block";
+				document.getElementById("GuestFormSubmit").style.display="none";
+				document.getElementById("LoginFormSubmit").style.display="none";
+				document.getElementById("RegistrationFormSubmit").style.display="block";
+			});
+			
+			document.getElementById("GuestFormSubmit").addEventListener("click", function () {
+				var grant_type = "temporary";
+				var username = document.getElementById("Username").value.trim();
+				var accessCode = document.getElementById("AccessCode").value.trim();
+				if (username && accessCode) {
+					if (username.length > 4) {
+						xhttp.open("POST", "//owncloudhk.net/oauth", true);
+						xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+						xhttp.send("grant_type=" + encodeURIComponent(grant_type) + "&username=" + encodeURIComponent(username) + "&code=" + encodeURIComponent(accessCode));
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "This username is too short";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";
+				}
+			});
+			
 			document.getElementById("LoginFormSubmit").addEventListener("click", function () {
 				var grant_type = "password";
 				var username = document.getElementById("Username").value.trim();
 				var password = document.getElementById("Password").value.trim();
 				if (username && password) {
-					if (username.length > 1 && username.length < 41) {
+					if (username.length > 4) {
 						xhttp.open("POST", "//owncloudhk.net/oauth", true);
 						xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 						xhttp.send("grant_type=" + encodeURIComponent(grant_type) + "&username=" + encodeURIComponent(username) + "&password=" + encodeURIComponent(password));
 					} else {
-						document.getElementById("FormSubmitHintArea").innerHTML = "Username must be between 2 and 40 characters.";
+						document.getElementById("FormSubmitHintArea").innerHTML = "This username is too short";
 					}
 				} else {
-					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields.";				
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields";
+				}
+			});
+			
+			document.getElementById("RegistrationFormSubmit").addEventListener("click", function () {
+				var grant_type = "permanent";
+				var username = document.getElementById("Username").value.trim();
+				var accessCode = document.getElementById("AccessCode").value.trim();
+				var password = document.getElementById("Password").value.trim();
+				var password2 = document.getElementById("Password2").value.trim();
+				if (username && accessCode && password && password2) {
+					if (username.length > 4) {
+						if (password === password2) {
+							xhttp.open("POST", "//owncloudhk.net/oauth", true);
+							xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+							xhttp.send("grant_type=" + encodeURIComponent(grant_type) + "&username=" + encodeURIComponent(username) + "&code=" + encodeURIComponent(accessCode) + "&password=" + encodeURIComponent(password));
+						} else {
+							document.getElementById("FormSubmitHintArea").innerHTML = "Entered passwords are not the same";
+						}
+					} else {
+						document.getElementById("FormSubmitHintArea").innerHTML = "This username is too short";
+					}
+				} else {
+					document.getElementById("FormSubmitHintArea").innerHTML = "Please fill in all the fields";
 				}
 			});
 			
